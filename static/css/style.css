@@ -1,0 +1,105 @@
+*{
+	background-color: #FAFD7D;
+}
+
+header * {
+	font-size: 1;
+}
+
+header {
+	position: relative;
+	background-color: #2D2D2F;
+	width: 80%;
+	margin-top:-0.5%;
+	margin-left: 10%;
+}
+
+header a {
+	text-decoration: none;
+	color: white;
+	background-color: #2D2D2F;
+}
+
+header p {
+	background-color: #2D2D2F;
+}
+
+header img{
+	vertical-align: middle;
+	padding-left: 1%;
+	padding-right: 1%;
+	background-color: #2D2D2F;
+}
+
+#lft{
+	padding-right: 1%;
+	margin-right: 1%;
+}
+
+#cntr {
+	border-right: 10px solid white; 
+	border-left: 10px solid white;
+	padding-bottom: 60px;
+	padding-top: 60px;
+	padding-right: 1%;
+	margin-right: 1%;
+}
+
+#cntr a{
+	padding-right: 25px;
+	padding-left: 35px;
+}
+
+#rght { 
+	text-align: center;
+	line-height: 70px; 
+	overflow: hidden;
+	width: 215px;
+	padding-right: 1%;
+}
+
+
+
+.hdr {
+	display: inline-block;
+	background-color: #2D2D2F;
+	color: #FFFFFF;
+	vertical-align: middle;
+	font-size: 34px;
+}
+
+main {
+	margin-left: 10%;
+	width: 78%;
+	background-color: #F1F2F1;
+	font-size: 32px;
+	padding-left: 1%;
+	padding-right: 1%;
+	height: 100%;
+	min-height: 71vh;
+	margin-top: -4vh;
+	padding-top: 1vh;
+}
+
+main * {
+	background-color: #F1F2F1;
+}
+
+footer {
+	display: inline-block;
+	display: flex;
+	width: 78%;
+	margin-left: 10%;
+	background-color: #2D2D2F;
+	padding: 1%;
+}
+
+footer * {
+	color: white;
+	background-color: #2D2D2F;
+	font-size: 20px;
+}
+
+#aa {
+	margin-left: auto;
+}
