@@ -22,7 +22,11 @@ header * {
 
 .lft1, .lft2 {
 	display: inline-block;
-	vertical-align: center;
+	vertical-align: middle;
+}
+
+.lft1 {
+	margin-right: 10px;
 }
 
 header hr {
@@ -57,9 +61,26 @@ header a {
 
 main {
 	margin-left: 10%;
-	width: 80%;
+	width: 78%;
 	background-color: #F1F2F1;
 	min-height: 70vh;
+	font-size: 32px;
+	padding-left: 1%;
+	padding-right: 1%;
+}
+
+main a {
+	color: #2F4C5C;
+	text-decoration: none;
+}
+
+main a:hover{
+	color: #528AA8;
+	text-decoration: line-underline;
+}
+
+main pre {
+	font-family: Times New Roman;
 }
 
 main * {
@@ -68,7 +89,7 @@ main * {
 
 footer {
 	display: flex;
-	width: 80%;
+	width: 78%;
 	margin-left: 10%;
 	background-color: #2D2D2F;
 	padding: 1%;
@@ -79,6 +100,10 @@ footer * {
 	color: white;
 	background-color: #2D2D2F;
 	font-size: 20px;
+}
+
+footer pre {
+	font-family: Times New Roman;
 }
 
 #aa {

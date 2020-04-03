@@ -14,7 +14,7 @@ def forum():
 
 @app.route('/about')
 def about():
-    return render_template('base.html', title='О проекте')
+    return render_template('about.html', title='О проекте')
 
 @app.route('/donat')
 def donat():

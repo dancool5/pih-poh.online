@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8; width=1200" />
-		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8; width=1200" />	
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}" />
+		{% block head %}{% endblock %}
 		<title>{{ title }}</title>
 	</head>
 	<body>
@@ -35,12 +35,11 @@
 				</div>
 		</header>
 		<main>
-			<h1>Сайт</h1>
 			{% block content %}{% endblock %}
 		</main>
 	</body>
 	<footer>
-		<p>©Copyright by , 2020</p>
-		<p id="aa">Контакты: dancool_5@mail.ru</p>
+		<p>©Copyright by Д. В. Костоусов, 2020</p>
+		<pre id="aa"><nobr>Контакты: <a href="mailto: dancool_5@mail.ru">dancool_5@mail.ru</a></nobr></pre>
 	</footer>
 </html>
