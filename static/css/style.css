@@ -1,5 +1,15 @@
+html {
+	height: 100%;
+}
+
 *{
 	background-color: #FAFD7D;
+}
+
+body {
+	display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 header {
@@ -12,6 +22,7 @@ header {
 	align-items: center;
 	padding-left: 1%;
 	padding-right: 1%;
+	flex: 0 0 auto;
 }
 
 header * {
@@ -60,10 +71,10 @@ header a {
 }
 
 main {
+	flex: 1 0 auto;
 	margin-left: 10%;
 	width: 78%;
 	background-color: #F1F2F1;
-	min-height: 70vh;
 	font-size: 32px;
 	padding-left: 1%;
 	padding-right: 1%;
@@ -88,6 +99,7 @@ main * {
 }
 
 footer {
+	flex: 0 0 auto;
 	display: flex;
 	width: 78%;
 	margin-left: 10%;
