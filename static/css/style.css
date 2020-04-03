@@ -2,97 +2,64 @@
 	background-color: #FAFD7D;
 }
 
-header * {
-	/*border: 1px solid white;*/
+header {
+	background-color: #2D2D2F;
+	width: 78%;
+	margin-left: 10%;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	align-items: center;
+	padding-left: 1%;
+	padding-right: 1%;
 }
 
-header {
-	display: flex;
-	position: relative;
+header * {
 	background-color: #2D2D2F;
-	width: 80%;
-	margin-top:-0.5%;
-	margin-left: 10%;
+	color: white;
+	text-align: center;
+}
+
+.lft1, .lft2 {
+	display: inline-block;
+	vertical-align: center;
+}
+
+header hr {
+	border: 1px solid #FAEC01;
 }
 
 header a {
 	text-decoration: none;
-	color: white;
-	background-color: #2D2D2F;
-}
-
-header p {
-	background-color: #2D2D2F;
-}
-
-header img{
-	margin-top: auto;
-	margin-bottom: auto;
-	padding-left: 1%;
-	padding-right: 1%;
-	background-color: #2D2D2F;
-}
-
-#lft{
-	padding-right: 1%;
-	padding-left: 1%;
-	margin: auto;
-	line-height: 250%;
-	margin-left: -1%;
-}
-
-#lft * {
-	margin: 0 auto;
-	width: 100%;
-}
-
-#cntr {
-	display: flex;
-	border-right: 10px solid white; 
-	border-left: 10px solid white;
-	padding-bottom: 35px;
-	padding-top: 35px;
-	margin: auto;
-	width: 60%;
-}
-
-#cntr a{
-	margin: 0 auto;
-}
-
-#rght { 
-	line-height: 250%;
-	text-align: center;
-	overflow: hidden;
-	margin: auto;
-	margin-right: 0;
-	padding-right: 3%;
-	padding-left: 1%;
-}
-
-#rght * {
-	margin: 0 auto;	
 }
 
 .hdr {
 	display: inline-block;
-	background-color: #2D2D2F;
-	color: #FFFFFF;
-	vertical-align: middle;
-	font-size: 24px;
+}
+
+.cntr1 {
+	border-left: 10px solid #FAEC01;
+	padding-left: 2%;
+}
+
+.cntr4 {
+	border-right: 10px solid #FAEC01;
+	padding-right: 2%;
+}
+
+.cntr1, .cntr2, .cntr3, .cntr4 {
+	line-height: 400%;
+}
+
+.rght {
+	line-height: 200%;
 }
 
 main {
 	margin-left: 10%;
-	width: 78%;
+	width: 80%;
 	background-color: #F1F2F1;
-	font-size: 32px;
-	padding-left: 1%;
-	padding-right: 1%;
-	height: 100%;
-	min-height: 80vh;
-	margin-top: -4vh;
-	padding-top: 1vh;
+	min-height: 70vh;
 }
 
 main * {
@@ -101,7 +68,7 @@ main * {
 
 footer {
 	display: flex;
-	width: 78%;
+	width: 80%;
 	margin-left: 10%;
 	background-color: #2D2D2F;
 	padding: 1%;

@@ -2,29 +2,37 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8; width=1200" />
+		
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}" />
 		<title>{{ title }}</title>
-		{% block head %}{% endblock %}
 	</head>
 	<body>
 		<header>
-			<img src="../static/images/logo.png">
-			<div class="hdr", id="lft">
-				<p>pih-poh.online</p>
-				<hr color="white">
-				<p>рэп и хип-хоп</p>
-			</div>
-			<div class="hdr", id="cntr">
-				<a>ЛЕНТА</a>
-				<a>ФОРУМ</a>
-				<a>О ПРОЕКТЕ</a>
-				<a>ДОНАТ</a>
-			</div>
-			<div class="hdr"; id="rght">
-				<a color="">вход</a>
-				<hr color="white">
-				<a>регистрация</a>
-			</div>
+				<div class="hdr lft">
+				  <img class="lft1" src="{{ url_for('static', filename='images/logo.png') }}" />
+					 <div class="lft2">
+						  <p>pih-poh.online</p>
+						  <hr />
+						  <p>рэп и хип-хоп</p>
+					</div>
+				</div>
+				<div class="hdr cntr1">
+					<a href="{{ url_for('main_page') }}">ЛЕНТА</a>
+				</div>
+				<div class="hdr cntr2">
+					<a href="{{ url_for('forum') }}">ФОРУМ</a>
+				</div>
+				<div class="hdr cntr3">
+					<a href="{{ url_for('about') }}">О ПРОЕКТЕ</a>
+				</div>
+				<div class="hdr cntr4">
+					<a href="{{ url_for('donat') }}">ДОНАТ</a>
+				</div>
+				<div class="hdr rght">
+				  <a href="{{ url_for('main_page') }}">вход</a>
+				  <hr />
+				  <a href="{{ url_for('main_page') }}">регистрация</a>
+				</div>
 		</header>
 		<main>
 			<h1>Сайт</h1>
@@ -32,7 +40,7 @@
 		</main>
 	</body>
 	<footer>
-		<p>©Copyright by Д. В. Костоусов, 2020</p>
+		<p>©Copyright by , 2020</p>
 		<p id="aa">Контакты: dancool_5@mail.ru</p>
 	</footer>
 </html>
