@@ -123,3 +123,40 @@ footer pre {
 #aa {
 	margin-left: auto;
 }
+
+.register {
+	background-color: #2D2D2F;
+	margin: auto;
+	padding-left: 3%;
+	padding-right: 3%;
+	padding-bottom: 1%;
+	border-radius: 50px;
+	border: 5px double white;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.register * {
+	padding-top: 0.5vh;
+	background-color: #2D2D2F;
+	color: white;
+	font-size: 16px;
+	font-family: Times New Roman;
+}
+
+.register input {
+	border: 1px solid white;
+	margin-top: 0.5vh;
+}
+
+.register textarea {
+	margin-top: 3%;
+	resize: none;
+	border: 1px solid white;
+}
+
+.btn {
+	padding: 5%;
+}
