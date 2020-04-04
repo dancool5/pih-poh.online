@@ -1,11 +1,7 @@
 from flask import Flask, render_template, redirect
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
-from flask_wtf import FlaskForm
-from wtforms import PasswordField, SubmitField, StringField, TextAreaField, BooleanField
-from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, Optional
 from data.user import User
-
+from forms import *
 from data import db_session
 
 
@@ -47,16 +43,6 @@ def donate():
     return render_template('base.html', title='Донат')
 
 
-class RegisterForm(FlaskForm):
-    email = StringField('Почта', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
-    nickname = StringField('Никнейм', validators=[DataRequired()])
-    birth_date = DateField('Дата рождения', validators=[Optional()])
-    about = TextAreaField("Информация о себе")
-    submit = SubmitField('Зарегистрироваться')
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -77,13 +63,6 @@ def register():
         db.commit()
         return redirect('/')
     return render_template('register.html', title='Регистрация', form=form)
-
-
-class LoginForm(FlaskForm):
-    nickname = StringField('Никнейм', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    remember_me = BooleanField('Запомнить меня')
-    submit = SubmitField('Войти')
 
 
 @app.route('/login', methods=['GET', 'POST'])
