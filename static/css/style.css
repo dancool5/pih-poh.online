@@ -127,8 +127,8 @@ footer pre {
 .register {
 	background-color: #2D2D2F;
 	margin: auto;
-	padding-left: 3%;
-	padding-right: 3%;
+	padding-left: 7%;
+	padding-right: 7%;
 	padding-bottom: 1%;
 	border-radius: 50px;
 	border: 5px double white;
@@ -136,6 +136,8 @@ footer pre {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	max-width: 10%;
+	min-width: 10%;
 }
 
 .register * {
@@ -146,17 +148,29 @@ footer pre {
 	font-family: Times New Roman;
 }
 
+.register form {
+	text-align: center;
+}
+
 .register input {
 	border: 1px solid white;
+	padding-left: 5px;
 	margin-top: 0.5vh;
 }
 
 .register textarea {
 	margin-top: 3%;
+	padding-left: 5px;
 	resize: none;
 	border: 1px solid white;
 }
 
+.register .message {
+	color: #FAEC01;
+}
+
 .btn {
 	padding: 5%;
+	color: #2D2D2F;
+	background-color: white;
 }
