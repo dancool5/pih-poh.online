@@ -13,6 +13,7 @@ body {
 }
 
 header {
+	font-size: 20px;
 	background-color: #2D2D2F;
 	width: 78%;
 	margin-left: 10%;
@@ -74,19 +75,19 @@ main {
 	flex: 1 0 auto;
 	margin-left: 10%;
 	width: 78%;
-	background-color: #F1F2F1;
-	font-size: 32px;
+	background-color: #EDEFF1;
+	font-size: 24px;
 	padding-left: 1%;
 	padding-right: 1%;
 }
 
 main a {
-	color: #2F4C5C;
+	color: #528AA8;
 	text-decoration: none;
 }
 
 main a:hover{
-	color: #528AA8;
+	color: #67C7F1;
 	text-decoration: line-underline;
 }
 
@@ -95,7 +96,8 @@ main pre {
 }
 
 main * {
-	background-color: #F1F2F1;
+	background-color: #EDEFF1;
+	color: #3A3A3A;
 }
 
 footer {
