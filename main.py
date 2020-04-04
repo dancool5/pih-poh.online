@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, SubmitField, StringField, TextAreaField
+from wtforms import PasswordField, SubmitField, StringField, TextAreaField, BooleanField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional
 from data.user import User
@@ -77,6 +77,35 @@ def register():
         db.commit()
         return redirect('/')
     return render_template('register.html', title='Регистрация', form=form)
+
+
+class LoginForm(FlaskForm):
+    nickname = StringField('Никнейм', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    remember_me = BooleanField('Запомнить меня')
+    submit = SubmitField('Войти')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        db = db_session.create_session()
+        user = db.query(User).filter(User.nickname == form.nickname.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                               message="Неправильный логин или пароль",
+                               form=form)
+    return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 db_session.global_init("db/pihpoh_db.sqlite")
