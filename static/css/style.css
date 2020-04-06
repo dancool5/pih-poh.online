@@ -47,6 +47,13 @@ header hr {
 
 header a {
 	text-decoration: none;
+	padding: 7px;
+}
+
+header a:hover,
+footer a:hover {
+	background-color: #535358;
+	border-radius: 20px;
 }
 
 .hdr {
@@ -116,6 +123,11 @@ footer * {
 	font-size: 20px;
 }
 
+footer a{
+	text-decoration: none;
+	padding: 7px;
+}
+
 footer pre {
 	font-family: Times New Roman;
 }
@@ -146,9 +158,14 @@ footer pre {
 	color: white;
 	font-size: 16px;
 	font-family: Times New Roman;
+	width: 100%;
 }
 
 .register form {
+	text-align: center;
+}
+
+.register h1 {
 	text-align: center;
 }
 
@@ -171,6 +188,15 @@ footer pre {
 
 .btn {
 	padding: 5%;
-	color: #2D2D2F;
+	color: black;
 	background-color: white;
+}
+
+.btn:hover {
+	background-color: #EDEFF1;
+	border: 1px groove white;
+}
+
+#aaa {
+
 }

@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, Optional
 
 
 class LoginForm(FlaskForm):
-    nickname = StringField('Никнейм', validators=[DataRequired()])
+    email = StringField('Почта', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
@@ -18,4 +18,5 @@ class RegisterForm(FlaskForm):
     nickname = StringField('Никнейм', validators=[DataRequired()])
     birth_date = DateField('Дата рождения', validators=[Optional()])
     about = TextAreaField("Информация о себе")
+    captcha = StringField('')
     submit = SubmitField('Зарегистрироваться')

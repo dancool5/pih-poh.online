@@ -71,6 +71,17 @@
 						</p>
 					{% endfor %}
 				</p>
+				<p>
+					<div class="captcha">
+						<img src="data:image/png;base64,{{ сptch }}" id="aaa">
+						{{ form.captcha(class="form-control") }}<br>
+					</div>
+					{% for error in form.about.errors %}
+						<p class="alert alert-danger" role="alert">
+							{{ error }}
+						</p>
+					{% endfor %}
+				</p>
 				<p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
 				<p class="message">{{message}}</p>
 			</form>
