@@ -13,6 +13,22 @@
 		<title>{{ title }}</title>
 	</head>
 	<body>
+			{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					<ul class=flashes>
+						{% for category, message in messages %}
+							<div class="{{ category }} notification-bar"> 
+								<p class="{{ category }} notification-text">{{ message }}</p>
+								<button type="{{ category }} button">
+									<img src="{{ url_for('static', filename='images/close.png') }}" alt="Скрыть">
+								</button>
+								<input id="show" type="button" value="show">
+							</div>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			{% endwith %}
+
 		<header>
 				<div class="hdr lft">
 				  <img class="lft1" src="{{ url_for('static', filename='images/logo.png') }}" />

@@ -197,6 +197,30 @@ footer pre {
 	border: 1px groove white;
 }
 
-#aaa {
+.notification-bar {
+    position: fixed;
+	display: flex;
+    width: 100%;
+	margin-right: 10px;
+    top: 0;
+}
+
+.notification-bar * {
+
+}
+
+.success {
+	background-color: green;
+}
+
+.notification-text {
+    font-size: 16px;
+    text-align: center;
+	color: white;
+    width: 100%;
+	display: inline-block;
+}
+
+.notification-bar button{
 
 }

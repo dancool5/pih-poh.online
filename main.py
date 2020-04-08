@@ -1,5 +1,9 @@
-from flask import Flask, render_template, redirect, session
+from flask_mail import Message, Mail
+
+from flask import Flask, render_template, redirect, session, flash, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
+from itsdangerous import URLSafeTimedSerializer
+
 from data.user import User
 from forms import *
 from data import db_session
@@ -8,14 +12,47 @@ import random
 import string
 import base64
 
+
 def create_captcha():
     text = ''.join([random.choice(string.ascii_lowercase) for i in range(5)])
     image = ImageCaptcha()
     encode = base64.b64encode(image.generate(text).getvalue())
     return text, encode
 
+
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(token, salt=app.config['SECURITY_PASSWORD_SALT'], max_age=3600)
+    except:
+        return False
+    return email
+
+
+def send_email(to, subject, template):
+    msg = Message(subject, recipients=[to], html=template, sender=app.config['MAIL_DEFAULT_SENDER'])
+    mail.send(msg)
+
+
 app = Flask(__name__)
+
 app.config['SECRET_KEY'] = 'QeKT2gpT58HDBr0'
+app.config['SECURITY_PASSWORD_SALT'] = 'hQaGogFivYp37Am'
+
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_DEFAULT_SENDER'] = 'from@example.com'
+app.config['MAIL_USERNAME'] = 'dancool55555@gmail.com'
+app.config['MAIL_PASSWORD'] = '89128899150_DaN'
+
+mail = Mail(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -28,12 +65,9 @@ def load_user(user_id):
 
 
 @app.route('/')
-def main_page():
-    return render_template('base.html', title='pih-poh.online')
-
-
 @app.route('/news_line')
 def news_line():
+    flash('На Вашу почту отправлено письмо для подтверждения.', 'success')
     return render_template('base.html', title='Лента')
 
 
@@ -55,38 +89,41 @@ def donate():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    if not form.validate_on_submit():
+    message = ''
+    if form.validate_on_submit():
+        db = db_session.create_session()
+        if form.password.data != form.password_again.data:
+            message = "Пароли не совпадают"
+        elif form.captcha.data != session['captcha']:
+            message = "Капча введена неверно"
+        elif db.query(User).filter(User.email == form.email.data).first():
+            message = "На эту почту уже зарегистрирован пользователь"
+        elif db.query(User).filter(User.nickname == form.nickname.data).first():
+            message = "Пользователь с таким ником уже есть"
+
+        if message:
+            captcha_text, encode_captcha = create_captcha()
+            session['captcha'] = captcha_text
+            return render_template('register.html', title='Регистрация', form=form, message=message,
+                                   сptch=str(encode_captcha)[2:-1])
+        else:
+            user = User(nickname=form.nickname.data, about=form.about.data, birth_date=form.birth_date.data,
+                        email=form.email.data)
+            user.set_password(form.password.data)
+            token = generate_confirmation_token(user.email)
+            confirm_url = url_for('confirm_email', token=token, _external=True)
+            print(confirm_url)
+            html = render_template('confirm_account.html', confirm=confirm_url, nick=user.nickname)
+            subject = "Подтверждение почты на pih-poh.online"
+            send_email(user.email, subject, html)
+            flash('На Вашу почту отправлено писмьо для подтверждения.', 'success')
+            db.add(user)
+            db.commit()
+
+            return redirect('/login')
+    else:
         captcha_text, encode_captcha = create_captcha()
         session['captcha'] = captcha_text
-    else:
-        if form.password.data != form.password_again.data:
-            captcha_text, encode_captcha = create_captcha()
-            session['captcha'] = captcha_text
-            return render_template('register.html', title='Регистрация', form=form, message="Пароли не совпадают",
-                                   сptch=str(encode_captcha)[2:-1])
-        if form.captcha.data != session['captcha']:
-            captcha_text, encode_captcha = create_captcha()
-            session['captcha'] = captcha_text
-            return render_template('register.html', title='Регистрация', form=form, message="Капча введена неверно",
-                                   сptch=str(encode_captcha)[2:-1])
-        db = db_session.create_session()
-        if db.query(User).filter(User.email == form.email.data).first():
-            captcha_text, encode_captcha = create_captcha()
-            session['captcha'] = captcha_text
-            return render_template('register.html', title='Регистрация', form=form,
-                                   message="На эту почту уже зарегистрирован пользователь",
-                                   сptch=str(encode_captcha)[2:-1])
-        if db.query(User).filter(User.nickname == form.nickname.data).first():
-            captcha_text, encode_captcha = create_captcha()
-            session['captcha'] = captcha_text
-            return render_template('register.html', title='Регистрация', form=form,
-                                   message="Пользователь с таким ником уже есть", сptch=str(encode_captcha)[2:-1])
-        user = User(nickname=form.nickname.data, about=form.about.data, birth_date=form.birth_date.data,
-                    email=form.email.data)
-        user.set_password(form.password.data)
-        db.add(user)
-        db.commit()
-        return redirect('/')
     return render_template('register.html', title='Регистрация', form=form, сptch=str(encode_captcha)[2:-1])
 
 
@@ -97,11 +134,11 @@ def login():
         db = db_session.create_session()
         user = db.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            return redirect("/")
-        return render_template('login.html',
-                               message="Неправильная почта или пароль",
-                               form=form)
+            if user.is_confirmed:
+                login_user(user, remember=form.remember_me.data)
+                return redirect("/")
+            return render_template('login.html', message="Почта аккаунта не подтверждена", form=form)
+        return render_template('login.html', message="Неправильная почта или пароль", form=form)
     return render_template('login.html', title='Авторизация', form=form)
 
 
@@ -110,6 +147,26 @@ def login():
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.route('/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('Ссылка подтверждения недействительна или ее срок действия истек.', 'danger')
+    db = db_session.create_session()
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        return redirect('/404')
+    if user.is_confirmed:
+        flash('Аккаунт уже подтвержден.', 'success')
+    else:
+        user.is_confirmed = True
+        db.add(user)
+        db.commit()
+        flash('Аккаунт успешно подтвержден!', 'success')
+    return redirect('/')
 
 
 db_session.global_init("db/pihpoh_db.sqlite")
