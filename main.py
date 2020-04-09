@@ -4,6 +4,8 @@ from flask import Flask, render_template, redirect, session, flash, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from itsdangerous import URLSafeTimedSerializer
 
+from datetime import date
+
 from data.user import User
 from forms import *
 from data import db_session
@@ -82,8 +84,9 @@ def register():
     message = ''
     if form.validate_on_submit():
         db = db_session.create_session()
-        if form.password.data != form.password_again.data:
-            message = "Пароли не совпадают"
+        print(type(form.birth_date.data), type(date))
+        if form.birth_date.data > date.today():
+            message = "Вы не могли родится в будущем!"
         elif form.captcha.data != session['captcha']:
             message = "Капча введена неверно"
         elif db.query(User).filter(User.email == form.email.data).first():
