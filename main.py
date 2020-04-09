@@ -40,17 +40,7 @@ def send_email(to, subject, template):
 
 
 app = Flask(__name__)
-
-app.config['SECRET_KEY'] = 'QeKT2gpT58HDBr0'
-app.config['SECURITY_PASSWORD_SALT'] = 'hQaGogFivYp37Am'
-
-app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_DEFAULT_SENDER'] = 'from@example.com'
-app.config['MAIL_USERNAME'] = 'dancool55555@gmail.com'
-app.config['MAIL_PASSWORD'] = '89128899150_DaN'
+app.config.from_object('config')
 
 mail = Mail(app)
 
