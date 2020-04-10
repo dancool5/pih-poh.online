@@ -55,6 +55,15 @@ def load_user(user_id):
     db = db_session.create_session()
     return db.query(User).get(user_id)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html')
+
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template('500.html'), 500
+
 
 @app.route('/')
 @app.route('/news_line')

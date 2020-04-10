@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8; width=1200" />
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}" />
+		<link rel="apple-touch-icon" sizes="144x144" href="{{ url_for('static', filename='images/favicons/apple-touch-icon.png') }}">
+		<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicons//favicon-32x32.png') }}">
+		<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicons//favicon-16x16.png') }}">
+		<link rel="mask-icon" href="{{ url_for('static', filename='images/favicons///safari-pinned-tab.svg') }}" color="#5bbad5">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="theme-color" content="#ffffff">
+		<title>{{ title }}</title>
+	</head>
+	<body>
+        <div class="error_page">
+            <h1>Упс, произошла ошибка</h1>
+            <h2>В нашей системе что-то пошло не так, приносим свои изинения</h2>
+            <pre><nobr><h2>Будем искринне признательны, если Вы подробно сообщите нам об ошибке: <a href="mailto: dancool_5@mail.ru">dancool_5@mail.ru</a></h2></nobr></pre>
+            <h2><a href="{{ url_for('news_line') }}">Вернуться на главную</a></h2>
+        </div>
+	</body>
+</html>

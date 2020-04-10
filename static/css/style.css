@@ -224,3 +224,25 @@ footer pre {
 .notification-bar button{
 
 }
+
+.error_page{
+    padding-left: 5%;
+    padding-top: 5%;
+    line-height: 300%;
+}
+
+.error_page * {
+    color: black;
+}
+
+.error_page pre {
+    font-family: Times New Roman;
+}
+
+.error_page a {
+	color: #528AA8;
+}
+
+.error_page a:hover{
+	color: #67C7F1;
+}
