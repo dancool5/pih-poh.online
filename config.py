@@ -1,10 +1,15 @@
-SECRET_KEY = 'QeKT2gpT58HDBr0'
-SECURITY_PASSWORD_SALT = 'hQaGogFivYp37Am'
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT')
 
 MAIL_SERVER = 'smtp.googlemail.com'
 MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
 MAIL_DEFAULT_SENDER = 'from@example.com'
-MAIL_USERNAME = 'dancool55555@gmail.com'
-MAIL_PASSWORD = '89128899150_DaN'
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
