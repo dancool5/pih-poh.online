@@ -81,7 +81,7 @@ def page_not_found(e):
 @app.route('/')
 @app.route('/news_line')
 def news_line():
-    flash('На Вашу почту отправлено письмо для подтверждения.', 'error')
+    flash('На Вашу почту отправлено письмо для подтверждения.', 'success')
     return render_template('base.html', title='Лента')
 
 
