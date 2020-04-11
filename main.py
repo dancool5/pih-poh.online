@@ -13,6 +13,8 @@ from captcha.image import ImageCaptcha
 import random
 import string
 import base64
+from dotenv import load_dotenv
+import os
 
 
 def create_captcha():
@@ -41,8 +43,19 @@ def send_email(to, subject, template):
     mail.send(msg)
 
 
+load_dotenv()
+
 app = Flask(__name__)
-app.config.from_object('config')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECURITY_PASSWORD_SALT')
+
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
+app.config['MAIL_PORT'] = os.environ.get('MAIL_PORT')
+app.config['MAIL_USE_TLS'] = os.environ.get('USE_TLS')
+app.config['MAIL_USE_SSL'] = os.environ.get('USE_SSL')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('DEFAULT_SENDER')
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 
 mail = Mail(app)
 
@@ -68,6 +81,7 @@ def page_not_found(e):
 @app.route('/')
 @app.route('/news_line')
 def news_line():
+    flash('На Вашу почту отправлено письмо для подтверждения.', 'error')
     return render_template('base.html', title='Лента')
 
 
