@@ -68,7 +68,6 @@ def page_not_found(e):
 @app.route('/')
 @app.route('/news_line')
 def news_line():
-    flash('На Вашу почту отправлено письмо для подтверждения.', 'success')
     return render_template('base.html', title='Лента')
 
 
@@ -93,9 +92,9 @@ def register():
     message = ''
     if form.validate_on_submit():
         db = db_session.create_session()
-        print(type(form.birth_date.data), type(date))
-        if form.birth_date.data > date.today():
-            message = "Вы не могли родится в будущем!"
+        if form.birth_date.data:
+            if form.birth_date.data > date.today():
+                message = "Вы не могли родится в будущем!"
         elif form.captcha.data != session['captcha']:
             message = "Капча введена неверно"
         elif db.query(User).filter(User.email == form.email.data).first():
@@ -114,18 +113,16 @@ def register():
             user.set_password(form.password.data)
             token = generate_confirmation_token(user.email)
             confirm_url = url_for('confirm_email', token=token, _external=True)
-            print(confirm_url)
             html = render_template('confirm_account.html', confirm=confirm_url, nick=user.nickname)
             subject = "Подтверждение почты на pih-poh.online"
             send_email(user.email, subject, html)
-            flash('На Вашу почту отправлено писмьо для подтверждения.', 'success')
             db.add(user)
             db.commit()
+            flash('На Вашу почту отправлено письмо для подтверждения.', 'success')
+            return redirect('/')
 
-            return redirect('/login')
-    else:
-        captcha_text, encode_captcha = create_captcha()
-        session['captcha'] = captcha_text
+    captcha_text, encode_captcha = create_captcha()
+    session['captcha'] = captcha_text
     return render_template('register.html', title='Регистрация', form=form, сptch=str(encode_captcha)[2:-1])
 
 

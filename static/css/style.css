@@ -1,5 +1,7 @@
 html {
 	height: 100%;
+	min-width: 1680px;
+	min-height: 1050px;
 }
 
 *{
@@ -198,34 +200,79 @@ footer pre {
 }
 
 .notification-bar {
-    position: fixed;
+	position: absolute;
 	display: flex;
-    width: 100%;
-	margin-right: 10px;
-    top: 0;
+	align-items: center;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	width: 100%;
 }
 
-.notification-bar * {
 
+.notification-bar button {
+	cursor: pointer;
+	margin-left: auto;
+	max-height: 20px;
+	width: auto;
+	border: none;
+	margin-right: 1%;
 }
 
-.success {
-	background-color: green;
+.notification-bar img{
+	max-height: 20px;
+	width: auto;
+	margin-right: 1%;
+}
+
+.error {
+	background-color: #F8D7DA;
+	color: red;
+}
+
+.error * {
+	background-color: #F8D7DA;
+}
+
+.success{
+	background-color: #D4EDDA;
+	color: green;
+}
+
+.success * {
+	background-color: #D4EDDA;
 }
 
 .notification-text {
     font-size: 16px;
-    text-align: center;
-	color: white;
-    width: 100%;
+	margin-left: auto;
+	color: green;
 	display: inline-block;
 }
 
-.notification-bar button{
-
+.animmm {
+	transform: translateY(-50px);
+	transition: transform .5s;
 }
 
-.error_page{
+.notification-bar {
+	animation: initiate 1s;
+}
+
+@keyframes initiate {  
+    0% {  
+        transform: translateY(-100%);  
+	}
+
+    100% {  
+        transform: translateY(0%);  
+    }   
+ }
+
+ 
+ 
+ 
+ .error_page{
     padding-left: 5%;
     padding-top: 5%;
     line-height: 300%;
