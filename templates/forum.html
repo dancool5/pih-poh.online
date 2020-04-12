@@ -3,7 +3,7 @@
 	<h1>Форум</h1>
 	<div class="forum-sec">
 		{% for section in sections %}
-			<div class="sec" onclick="location.href='https://yraaa.ru'">
+			<div class="sec" onclick="location.href='{{ url_for('sect', section_id=section.id) }}'">
 				<div class="lft_sec">
 					<h3>{{ section.name }}</h3>
 					<hr></hr>
