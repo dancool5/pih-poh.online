@@ -24,7 +24,11 @@
 						{% for category, message in messages %}
 							<div class="{{ category }} notification-bar" id="nbar"> 
 								<p class="notification-text {{ category }}">{{ message }}</p>
-								<button onclick="clos()"><img src="{{ url_for('static', filename='images/close.png') }}"></button>
+								{% if category == 'error' %}
+									<button onclick="clos()"><img src="{{ url_for('static', filename='images/close_err.png') }}"></button>
+								{% else %}
+									<button onclick="clos()"><img src="{{ url_for('static', filename='images/close_suc.png') }}"></button>
+								{% endif %}
 							</div>
 						{% endfor %}
 					</ul>
