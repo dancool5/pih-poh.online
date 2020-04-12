@@ -4,9 +4,12 @@ from flask import Flask, render_template, redirect, session, flash, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from itsdangerous import URLSafeTimedSerializer
 
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from data.user import User
+from data.section import Section
+from data.thread import Thread
+from data.message import Message
 from forms import *
 from data import db_session
 from captcha.image import ImageCaptcha
@@ -68,6 +71,7 @@ def load_user(user_id):
     db = db_session.create_session()
     return db.query(User).get(user_id)
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html')
@@ -86,7 +90,18 @@ def news_line():
 
 @app.route('/forum')
 def forum():
-    return render_template('base.html', title='Форум')
+    db = db_session.create_session()
+    sections = db.query(Section).all()
+    for sect in sections:
+        threads = db.query(Thread).filter(Thread.section_id == sect.id).all()
+        active = 0
+        for thread in threads:
+            if thread.last_message_date:
+                if thread.last_message_date < timedelta(3) + datetime.now():
+                    active += 1
+        sect.active_threads = active
+    db.commit()
+    return render_template('forum.html', title='Форум', sections=sections)
 
 
 @app.route('/about')
@@ -182,5 +197,24 @@ def confirm_email(token):
 
 
 db_session.global_init("db/pihpoh_db.sqlite")
+
+db = db_session.create_session()
+
+if len(db.query(Section).all()) == 0:
+    sections = {'Русская музыка': 'Описание Описание Описание Описание Описание Описание Описание Описание Описание ',
+                'Зарубежная музыка': 'Описание Описание Описание Описание Описание Описание Описание Описание Описание ',
+                'Cтихи | поэзия': 'Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание ',
+                'Олдскул': 'Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание ',
+                'Фрешмены': 'Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание ',
+                'Битмейкинг': 'Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание ',
+                'Мероприятия': 'Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание ',
+                'Вопросы новичков': 'Описание Описание Описание Описание Описание Описание Описание Описание Описание ',
+                'Флуд': 'Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание ',
+                }
+    for name, description in sections.items():
+        section = Section(name=name, description=description)
+        db.add(section)
+    db.commit()
+
 if __name__ == '__main__':
     app.run(port=5000, host='127.0.0.1')

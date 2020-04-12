@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+	<h1>Форум</h1>
+	<div class="forum-sec">
+		{% for section in sections %}
+			<div class="sec" onclick="location.href='https://yraaa.ru'">
+				<div class="lft_sec">
+					<h3>{{ section.name }}</h3>
+					<hr></hr>
+					<p>{{ section.description }}</p>
+				</div>
+				<div class="rght_sec">
+					<p>Всего тредов: {{ section.count_threads }}</p>
+					<p class="act" title="(!)Активным считается тред, в котором последнее сообщение написано не менее 3 дней назад">Активных: {{ section.active_threads }}</p>
+					<p>Последний:
+					{% if section.last_thread_date %}
+						{{ section.last_thread_date }}
+					{% else %}
+						-
+					{% endif %}
+					</p>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}

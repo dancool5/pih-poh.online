@@ -8,8 +8,12 @@ class Thread(SqlAlchemyBase):
     __tablename__ = 'threads'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    section = sqlalchemy.Column(sqlalchemy.String, index=True)
     name = sqlalchemy.Column(sqlalchemy.String, unique=True)
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now, index=True)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+    last_message_date = sqlalchemy.Column(sqlalchemy.DateTime, default=None)
+    author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
+    section_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("sections.id"))
+
     author = orm.relation('User')
+    section = orm.relation('Section')
