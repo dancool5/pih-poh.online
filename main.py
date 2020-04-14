@@ -116,6 +116,7 @@ def sect(section_id):
     db = db_session.create_session()
     section = db.query(Section).filter(Section.id == section_id).first()
     threads = db.query(Thread).filter(Thread.section_id == section.id).all()
+    threads.reverse()
     return render_template('section.html', title=section.name, threads=threads, section=section)
 
 
@@ -133,6 +134,11 @@ def create_thread(section_id):
         db.commit()
         return redirect(url_for('sect', section_id=section_id))
     return render_template('create_thread.html', title='Создать тред', form=form)
+
+
+@app.route('/forum/section/<section_id>/thread/<thread_id>', methods=['GET', 'POST'])
+def thread(section_id, thread_id):
+    return render_template('base.html')
 
 
 @app.route('/about')

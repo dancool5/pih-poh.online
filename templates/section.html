@@ -7,7 +7,25 @@
 			{% endif %}
 	</div>
     {% if threads %}
-        <p>n,lnl</p>
+		<div class="sec_thr">
+			{% for thread in threads %}
+					<div class="thread" onclick="location.href='{{ url_for('thread', section_id=section.id, thread_id=thread.id) }}'">
+						<div class="lft_thr">
+							<h3>{{ thread.name }}</h3>
+							<hr></hr>
+							{% if thread.description|length > 60 %}
+								<p>{{ thread.description[:58] + '...' }}</p>
+							{% else %}
+								<p>{{ thread.description }}</p>
+							{% endif %}
+						</div>
+						<div class="rght_thr">
+							<img src="{{ url_for('static', filename='images/avatar.png') }}">
+							<p>{{ thread.author.nickname }}</p>
+						</div>
+					</div>
+			{% endfor %}
+		</div>
     {% else %}
         <h4>Тредов пока нет</h4>
     {% endif %}

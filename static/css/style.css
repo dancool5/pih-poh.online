@@ -316,12 +316,13 @@ footer pre {
 	padding-right: 1%;
 	padding-left: 1%;
 	border-right: 4px solid #FAEC01;
-	width: 74.67%;
+	flex-grow: 2;
 }
 
 .rght_sec {
 	padding-left: 1%;
 	padding-right: 1%;
+	margin-left: auto;
 }
 
 .act:hover {
@@ -355,4 +356,42 @@ footer pre {
 	max-width: 20%;
 	margin: auto;
 	margin-top: 5%;
+}
+
+.sec_thr {
+	margin-left: 2%;
+	margin-right: 2%;
+	margin-top: 2%;
+	display: flex;
+	border : 5px solid #FAEC01;
+	cursor: pointer;
+	flex-direction: column;
+}
+
+.thread {
+	display: flex;
+	align-items: center;
+	border: 2px solid #FAEC01;
+}
+
+.lft_thr {
+	padding: 1%;
+	flex-grow: 2;
+	overflow: hidden;
+	width: 70%;
+}
+
+.rght_thr {
+	width: 20%;
+	border-left: 4px solid #FAEC01;
+	text-align: center;
+	padding: 1%;
+	align-content: center;
+	margin-left: auto;
+}
+
+.rght_thr img {
+	width: 150px;
+	max-height: 150px;
+	height: auto;
 }

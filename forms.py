@@ -18,8 +18,8 @@ class RegisterForm(FlaskForm):
                                          Length(min=5, max=20, message='Пароль должен содержать от 5 до 20 символов')])
     password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
     nickname = StringField('Никнейм',
-                           validators=[DataRequired(), Length(min=3, max=20,
-                                                              message='Ник должен содержать от 3 до 25 символов')])
+                           validators=[DataRequired(), Length(min=3, max=15,
+                                                              message='Ник должен содержать от 3 до 15 символов')])
     birth_date = DateField('Дата рождения', validators=[Optional()])
     about = TextAreaField("Информация о себе",
                           validators=[Length(max=100, message='Не пишите слишком много (максимум - 100 символов)!')])
@@ -28,6 +28,9 @@ class RegisterForm(FlaskForm):
 
 
 class ThreadForm(FlaskForm):
-    name = StringField('Тема', validators=[DataRequired()])
-    description = TextAreaField('Описание', validators=[DataRequired()])
+    name = StringField('Тема', validators=[DataRequired(),
+                                           Length(max=100, message='Тема должна содержать небольше 100 символов')])
+    description = TextAreaField('Описание',
+                                validators=[DataRequired(),
+                                            Length(max=300, message='Тема должна содержать небольше 300 символов')])
     submit = SubmitField('Создать')
