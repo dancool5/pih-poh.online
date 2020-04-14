@@ -101,8 +101,18 @@ def forum():
     sections = db.query(Section).all()
     for sect in sections:
         threads = db.query(Thread).filter(Thread.section_id == sect.id).all()
+        sect.count_threads = len(threads)
+        if threads:
+            sect.last_thread_date = threads[-1].created_date
+        else:
+            sect.last_thread_date = None
         active = 0
         for thread in threads:
+            messages = db.query(Message).filter(Message.thread_id == thread.id).all()
+            thread.count_messages = len(messages)
+            messages.reverse()
+            if messages:
+                thread.last_message_date = messages[0].created_date
             if thread.last_message_date:
                 if thread.last_message_date < timedelta(3) + datetime.now():
                     active += 1
@@ -138,7 +148,20 @@ def create_thread(section_id):
 
 @app.route('/forum/section/<section_id>/thread/<thread_id>', methods=['GET', 'POST'])
 def thread(section_id, thread_id):
-    return render_template('base.html')
+    db = db_session.create_session()
+    thread = db.query(Thread).filter(Thread.id == thread_id).first()
+    messages = db.query(Message).filter(Message.thread_id == thread.id).all()
+    return render_template('thread.html', thread=thread, messages=messages)
+
+@app.route('/<thread_id>/delete')
+def delete_thread(thread_id):
+    db = db_session.create_session()
+    thread = db.query(Thread).filter(Thread.id == thread_id).first()
+    if current_user.id == thread.author_id:
+        db.delete(thread)
+        db.commit()
+        return redirect('/forum')
+    return redirect('/404')
 
 
 @app.route('/about')
@@ -210,6 +233,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    return redirect('/')
 
 
 @app.route('/confirm/<token>')
@@ -245,7 +269,8 @@ if len(db.query(Section).all()) == 0:
                 'Битмейкинг': ['Описание Описание Описание Описание Описание Описание Описание Описание', 'beatmaking'],
                 'Мероприятия': ['Описание Описание Описание Описание Описание Описание Описание Описание', 'events'],
                 'Вопросы новичков': ['Описание Описание Описание Описание Описание Описание', 'novice_questions'],
-                'Флуд': ['Описание Описание Описание Описание Описание Описание Описание Описание Описание', 'flood']
+                'Флуд': ['Описание Описание Описание Описание Описание Описание Описание Описание Описание', 'flood'],
+                'Остальное': ['Описание', 'other']
                 }
     for name, arguments in sections.items():
         description, address = arguments[0], arguments[1]

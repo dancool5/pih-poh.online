@@ -11,6 +11,7 @@ class Thread(SqlAlchemyBase):
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime)
     last_message_date = sqlalchemy.Column(sqlalchemy.DateTime, default=None)
+    count_messages = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     section_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("sections.id"))
 

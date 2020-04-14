@@ -313,16 +313,17 @@ footer pre {
 }
 
 .lft_sec {
+	max-width: 74.6%;
+	min-width: 74.6%;
 	padding-right: 1%;
 	padding-left: 1%;
 	border-right: 4px solid #FAEC01;
-	flex-grow: 2;
 }
 
 .rght_sec {
 	padding-left: 1%;
 	padding-right: 1%;
-	margin-left: auto;
+	margin-right: auto;
 }
 
 .act:hover {
@@ -338,14 +339,10 @@ footer pre {
 .add_tred {
 	text-decoration: none;
 	font-weight: 900;
-	border: 2px solid red;
+	border: 2px solid;
 	border-radius: 15px;
 	padding: 1%;
 }	
-
-.add_tred {
-	border: 2px solid;
-}
 
 .add_tred:hover {
 	border: 2px solid #67C7F1;
@@ -359,9 +356,7 @@ footer pre {
 }
 
 .sec_thr {
-	margin-left: 2%;
-	margin-right: 2%;
-	margin-top: 2%;
+	margin: 2%;
 	display: flex;
 	border : 5px solid #FAEC01;
 	cursor: pointer;
@@ -384,14 +379,38 @@ footer pre {
 .rght_thr {
 	width: 20%;
 	border-left: 4px solid #FAEC01;
-	text-align: center;
 	padding: 1%;
-	align-content: center;
 	margin-left: auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .rght_thr img {
 	width: 150px;
 	max-height: 150px;
 	height: auto;
+	border: 10px double black;
+}
+
+.thr {
+	border: 5px solid #FAEC01;
+	margin-left: 4%;
+	margin-right: 4%;
+	margin-bottom: 2%;
+	margin-top: 4%;
+}
+
+.del_tred {
+	text-decoration: none;
+	font-weight: 900;
+	border: 2px solid;
+	border-radius: 15px;
+	padding: 1%;
+	margin-left: 4%;
+}	
+
+.del_tred:hover {
+	border: 2px solid #67C7F1;
 }
