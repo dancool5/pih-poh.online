@@ -1,4 +1,4 @@
-from flask_mail import Message, Mail
+from flask_mail import Message as MailMessage, Mail
 
 from flask import Flask, render_template, redirect, session, flash, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
@@ -42,7 +42,7 @@ def confirm_token(token):
 
 
 def send_email(to, subject, template):
-    msg = Message(subject, recipients=[to], html=template, sender=app.config['MAIL_DEFAULT_SENDER'])
+    msg = MailMessage(subject, recipients=[to], html=template, sender=app.config['MAIL_DEFAULT_SENDER'])
     mail.send(msg)
 
 
@@ -54,11 +54,18 @@ app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECURITY_PASSWORD_SALT')
 
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
 app.config['MAIL_PORT'] = os.environ.get('MAIL_PORT')
-app.config['MAIL_USE_TLS'] = os.environ.get('USE_TLS')
-app.config['MAIL_USE_SSL'] = os.environ.get('USE_SSL')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('DEFAULT_SENDER')
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS') == 'True'
+app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL') == 'True'
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+print(app.config['MAIL_SERVER'],
+app.config['MAIL_PORT'],
+app.config['MAIL_USE_TLS'],
+app.config['MAIL_USE_SSL'],
+app.config['MAIL_DEFAULT_SENDER'],
+app.config['MAIL_USERNAME'],
+app.config['MAIL_PASSWORD'])
 
 mail = Mail(app)
 
@@ -109,7 +116,23 @@ def sect(section_id):
     db = db_session.create_session()
     section = db.query(Section).filter(Section.id == section_id).first()
     threads = db.query(Thread).filter(Thread.section_id == section.id).all()
-    return render_template('section.html', title=section.name, threads=threads, section_name=section.name)
+    return render_template('section.html', title=section.name, threads=threads, section=section)
+
+
+@app.route('/forum/section/<section_id>/create_thread', methods=['GET', 'POST'])
+def create_thread(section_id):
+    form = ThreadForm()
+    if form.validate_on_submit():
+        db = db_session.create_session()
+        thread = Thread(name=form.name.data, description=form.description.data, author_id=current_user.id,
+                        section_id=section_id, created_date=datetime.now())
+        db.add(thread)
+        section = db.query(Section).filter(Section.id == section_id).first()
+        section.count_threads = section.count_threads + 1
+        section.last_thread_date = thread.created_date
+        db.commit()
+        return redirect(url_for('sect', section_id=section_id))
+    return render_template('create_thread.html', title='Создать тред', form=form)
 
 
 @app.route('/about')
@@ -181,7 +204,6 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect("/")
 
 
 @app.route('/confirm/<token>')

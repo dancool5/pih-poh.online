@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-	<h2>{{ section_name }}</h2>
+	<div class="sec_head">
+		<h2>{{ section.name }}</h2>
+			{% if current_user.is_authenticated %}
+				<a class="add_tred" href="{{ url_for('create_thread', section_id=section.id) }}">+ Создать тред</a>
+			{% endif %}
+	</div>
     {% if threads %}
         <p>n,lnl</p>
     {% else %}

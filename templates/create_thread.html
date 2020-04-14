@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+	<div class="register create_thread">
+		<h1>НОВЫЙ ТРЕД</h1>
+		<form action="" method="post">
+			{{ form.hidden_tag() }}
+			{{ form.csrf_token }}
+			<p>
+				{{ form.name.label }}<br>
+				{{ form.name(class="form-control") }}<br>
+				{% for error in form.name.errors %}
+					<p class="alert alert-danger" role="alert">
+						{{ error }}
+					</p>
+				{% endfor %}
+			</p>
+			<p>
+				{{ form.description.label }}<br>
+				{{ form.description(rows="10", cols="30", class="form-control") }}<br>
+				{% for error in form.description.errors %}
+					<p class="alert alert-danger" role="alert">
+						{{ error }}
+					</p>
+				{% endfor %}
+			</p>
+			<p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+			<p class="message">{{message}}</p>
+		</form>
+	</div>
+{% endblock %}

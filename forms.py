@@ -25,3 +25,9 @@ class RegisterForm(FlaskForm):
                           validators=[Length(max=100, message='Не пишите слишком много (максимум - 100 символов)!')])
     captcha = StringField('')
     submit = SubmitField('Зарегистрироваться')
+
+
+class ThreadForm(FlaskForm):
+    name = StringField('Тема', validators=[DataRequired()])
+    description = TextAreaField('Описание', validators=[DataRequired()])
+    submit = SubmitField('Создать')

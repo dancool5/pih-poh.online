@@ -14,7 +14,7 @@
 					<p class="act" title="(!)Активным считается тред, в котором последнее сообщение написано не менее 3 дней назад">Активных: {{ section.active_threads }}</p>
 					<p>Последний:
 					{% if section.last_thread_date %}
-						{{ section.last_thread_date }}
+						{{ section.last_thread_date.strftime("%Y-%m-%d %H:%M") }}
 					{% else %}
 						-
 					{% endif %}
