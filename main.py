@@ -157,20 +157,34 @@ def thread(section_id, thread_id):
                           thread_id=thread.id)
         db.add(message)
         db.commit()
-        messages = db.query(Message).filter(Message.thread_id == thread.id).all()
-        form = MessageForm()
-        return redirect(url_for('thread', thread=thread, messages=messages, form=form, thread_id=thread_id,
-                                section_id=section_id))
-    return render_template('thread.html', thread=thread, messages=messages, form=form)
+        return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
+    return render_template('thread.html', thread=thread, messages=messages, form=form, section_id=section_id,
+                           title=thread.name)
 
 @app.route('/<thread_id>/delete')
 def delete_thread(thread_id):
     db = db_session.create_session()
     thread = db.query(Thread).filter(Thread.id == thread_id).first()
+    section_id = thread.section_id
+    messages = db.query(Message).filter(Message.thread_id == thread_id).all()
     if current_user.id == thread.author_id:
+        for message in messages:
+            db.delete(message)
         db.delete(thread)
         db.commit()
-        return redirect('/forum')
+        return redirect(url_for('sect', section_id=section_id))
+    return redirect('/404')
+
+
+@app.route('/<section_id>/thread/<thread_id>/message/<message_id>/delete')
+def delete_message(thread_id, message_id, section_id):
+    print(1231)
+    db = db_session.create_session()
+    message = db.query(Message).filter(Message.id == message_id).first()
+    if current_user.id == message.author_id:
+        db.delete(message)
+        db.commit()
+        return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
     return redirect('/404')
 
 
@@ -264,6 +278,17 @@ def confirm_email(token):
         db.commit()
         flash('Аккаунт успешно подтвержден!', 'success')
     return redirect('/')
+
+
+@app.route('/user/<user_id>')
+def user(user_id):
+    db = db_session.create_session()
+    user = db.query(User).filter(User.id == user_id).first()
+    if current_user.id == user.id:
+        title = 'Моя страница'
+    else:
+        title = user.nickname
+    return render_template('user.html', title=title, user=user)
 
 
 db_session.global_init("db/pihpoh_db.sqlite")

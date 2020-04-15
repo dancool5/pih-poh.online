@@ -58,7 +58,7 @@
 				</div>
 				<div class="hdr rght">
 				{% if current_user.is_authenticated %}
-					<a href="{{ url_for('register') }}">{{ current_user.nickname }}</a>
+					<a href="{{ url_for('user', user_id=current_user.id) }}">{{ current_user.nickname }}</a>
 					<hr />
 					<a href="{{ url_for('logout') }}">выйти</a>
 				{% else %}

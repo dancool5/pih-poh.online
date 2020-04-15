@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+	<h3><a href="{{ url_for('sect', section_id=section_id) }}"><= Назад</a></h3>
 	<div class="thread thr">
 		<div class="lft_thr">
 			<h3>{{ thread.name }}</h3>
@@ -8,7 +9,7 @@
 		</div>
 		<div class="rght_thr">
 			<img src="{{ url_for('static', filename='images/avatar.png') }}">
-			<p>{{ thread.author.nickname }}</p>
+			<p><a href="{{ url_for('user', user_id=thread.author_id) }}">{{ thread.author.nickname }}</a></p>
 		</div>
 	</div>
 	{% if current_user.id == thread.author.id %}
@@ -19,7 +20,7 @@
 		{{ form.csrf_token }}
 		<p>
 			{{ form.content.label }}<br>
-			{{ form.content(class="form-control", rows="10", cols="30") }}<br>
+			{{ form.content(class="form-control mes_content", rows=10) }}<br>
 			{% for error in form.content.errors %}
 				<p class="alert alert-danger" role="alert">
 					{{ error }}
@@ -33,13 +34,18 @@
 		{% for message in messages %}
 			<div class="mess">
 				<div class="lft_mes">
-					<p>{{ message.content }}</p>
+					<p>{{ message.content}}</p>
 				</div>
 				<div class="rght_mes">
 					<img src="{{ url_for('static', filename='images/avatar.png') }}">
-					<p>{{ message.author.nickname }}</p>
+					<p><a href="{{ url_for('user', user_id=thread.author_id) }}">{{ message.author.nickname }}</a></p>
 				</div>
 			</div>
+			{% if message.author_id == current_user.id %}
+				<a class="btn_mes" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}">Удалить сообщение</a>
+			{% else %}
+				<a class="btn_mes">Ответить</a>
+			{% endif %}
 		{% endfor %}
 	{% else %}
 		<h4 style="margin-left: 4%">Сообщений пока нет</h4>

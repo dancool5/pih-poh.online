@@ -196,14 +196,15 @@ footer pre {
 .btn {
 	padding: 5%;
 	color: black;
+	border-radius: 20px;
 	background-color: #EDEFF1;
 	border: 5px solid #2D2D2F;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 }
 
 .btn:hover {
-	background-color: #FAEC01;
 	cursor: pointer;
-	border: 1px groove #2D2D2F;
+	box-shadow: none;
 }
 
 .notification-bar {
@@ -342,10 +343,12 @@ footer pre {
 	border: 2px solid;
 	border-radius: 15px;
 	padding: 1%;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 }	
 
 .add_tred:hover {
 	border: 2px solid #67C7F1;
+	box-shadow: none;
 }
 
 .create_thread {
@@ -409,10 +412,12 @@ footer pre {
 	border-radius: 15px;
 	padding: 1%;
 	margin-left: 4%;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 }	
 
 .del_tred:hover {
 	border: 2px solid #67C7F1;
+	box-shadow: none;
 }
 
 .mes {
@@ -422,10 +427,17 @@ footer pre {
 	padding-left: 1%;
 	padding-right: 1%;
 	margin-top: 5%;
+	margin-bottom: 3%;
 }
 
 .mes * {
 	width: 100%;
+}
+
+.mes_content {
+	padding: 0.5%;
+	font-family: TimesNewRoman;
+	font-size: 18px;
 }
 
 .mes .btn {
@@ -434,14 +446,21 @@ footer pre {
 	padding: 1%;
 	border-radius: 10px;
 	border: 2px solid black;
+	font-weight: 500;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.mes .btn:hover {
+	border-style: groove;
+	box-shadow: none;
 }
 
 .mess {
 	display: flex;
-	margin-bottom: 2%;
 	margin-left: 4%;
 	margin-right: 4%;
 	height: 100%;
+	margin-bottom: 0.1%;
 }
 
 .mess img {
@@ -468,4 +487,25 @@ footer pre {
 	text-align: center;
 	flex-basis: content;
 }
+
+.btn_mes {
+	text-decoration: none;
+	font-weight: 900;
+	font-size: 16px;
+	border: 2px solid;
+	border-radius: 0px 0px 15px 15px;
+	padding: 1%;
+	margin-left: 4%;
+	margin-bottom: 3%;
+	display: flex;
+	justify-content: center;
+	width: 11%;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}	
+
+.btn_mes:hover {
+	border: 2px solid #67C7F1;
+	box-shadow: none;
+}
+
 

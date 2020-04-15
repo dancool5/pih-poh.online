@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+	<h3><a href="{{ url_for('forum') }}"><= Назад</a></h3>
 	<div class="sec_head">
 		<h2>{{ section.name }}</h2>
 			{% if current_user.is_authenticated %}
@@ -21,7 +22,7 @@
 						</div>
 						<div class="rght_thr">
 							<img src="{{ url_for('static', filename='images/avatar.png') }}">
-							<p>{{ thread.author.nickname }}</p>
+							<p><a href="{{ url_for('user', user_id=thread.author_id) }}">{{ thread.author.nickname }}</a></p>
 						</div>
 					</div>
 			{% endfor %}
