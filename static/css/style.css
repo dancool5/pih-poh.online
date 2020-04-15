@@ -414,3 +414,58 @@ footer pre {
 .del_tred:hover {
 	border: 2px solid #67C7F1;
 }
+
+.mes {
+	margin-left: 4%;
+	margin-right: 4%;
+	border: 5px solid black;
+	padding-left: 1%;
+	padding-right: 1%;
+	margin-top: 5%;
+}
+
+.mes * {
+	width: 100%;
+}
+
+.mes .btn {
+	width: 10%;
+	text-align: center;
+	padding: 1%;
+	border-radius: 10px;
+	border: 2px solid black;
+}
+
+.mess {
+	display: flex;
+	margin-bottom: 2%;
+	margin-left: 4%;
+	margin-right: 4%;
+	height: 100%;
+}
+
+.mess img {
+	width: 100px;
+	max-height: 100px;
+	height: auto;
+	border: 10px double black;
+}
+
+.lft_mes {
+	border: 2px solid #FAEC01;
+	flex-basis: content;
+	padding: 1%;
+	min-width: 30%;
+	overflow: hidden;
+}
+
+.rght_mes {
+	height: 100%;
+	padding: 1%;
+	border: 2px solid #FAEC01;
+	border-radius: 0px 20px 20px 0px;
+	align-content: center;
+	text-align: center;
+	flex-basis: content;
+}
+

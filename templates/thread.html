@@ -14,8 +14,33 @@
 	{% if current_user.id == thread.author.id %}
 		<a class="del_tred" href="{{ url_for('delete_thread', thread_id=thread.id) }}">Удалить тред</a>
 	{% endif %}
+	<form action="" method="post" class="mes">
+		{{ form.hidden_tag() }}
+		{{ form.csrf_token }}
+		<p>
+			{{ form.content.label }}<br>
+			{{ form.content(class="form-control", rows="10", cols="30") }}<br>
+			{% for error in form.content.errors %}
+				<p class="alert alert-danger" role="alert">
+					{{ error }}
+				</p>
+			{% endfor %}
+		</p>
+		<p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+		<p class="message">{{message}}</p>
+	</form>
 	{% if messages %}
-	
+		{% for message in messages %}
+			<div class="mess">
+				<div class="lft_mes">
+					<p>{{ message.content }}</p>
+				</div>
+				<div class="rght_mes">
+					<img src="{{ url_for('static', filename='images/avatar.png') }}">
+					<p>{{ message.author.nickname }}</p>
+				</div>
+			</div>
+		{% endfor %}
 	{% else %}
 		<h4 style="margin-left: 4%">Сообщений пока нет</h4>
 	{% endif %}

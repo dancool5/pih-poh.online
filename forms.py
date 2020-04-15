@@ -29,8 +29,16 @@ class RegisterForm(FlaskForm):
 
 class ThreadForm(FlaskForm):
     name = StringField('Тема', validators=[DataRequired(),
-                                           Length(max=100, message='Тема должна содержать небольше 100 символов')])
+                                           Length(max=100, message='Тема должна содержать неболее 100 символов')])
     description = TextAreaField('Описание',
                                 validators=[DataRequired(),
-                                            Length(max=300, message='Тема должна содержать небольше 300 символов')])
+                                            Length(max=300, message='Тема должна содержать неболее 300 символов')])
     submit = SubmitField('Создать')
+
+
+class MessageForm(FlaskForm):
+    content = TextAreaField('Сообщение',
+                            validators=[DataRequired(),
+                                        Length(max=1500,
+                                               message='Сообщение должно содержать неболее 1500 символов')])
+    submit = SubmitField('Отправить')

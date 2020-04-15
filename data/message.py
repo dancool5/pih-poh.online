@@ -1,4 +1,3 @@
-import datetime
 import sqlalchemy
 from .db_session import SqlAlchemyBase
 from sqlalchemy import orm
@@ -9,7 +8,7 @@ class Message(SqlAlchemyBase):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime)
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     thread_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("threads.id"))
 

@@ -148,10 +148,20 @@ def create_thread(section_id):
 
 @app.route('/forum/section/<section_id>/thread/<thread_id>', methods=['GET', 'POST'])
 def thread(section_id, thread_id):
+    form = MessageForm()
     db = db_session.create_session()
     thread = db.query(Thread).filter(Thread.id == thread_id).first()
     messages = db.query(Message).filter(Message.thread_id == thread.id).all()
-    return render_template('thread.html', thread=thread, messages=messages)
+    if form.validate_on_submit():
+        message = Message(content=form.content.data, created_date=datetime.now(), author_id=current_user.id,
+                          thread_id=thread.id)
+        db.add(message)
+        db.commit()
+        messages = db.query(Message).filter(Message.thread_id == thread.id).all()
+        form = MessageForm()
+        return redirect(url_for('thread', thread=thread, messages=messages, form=form, thread_id=thread_id,
+                                section_id=section_id))
+    return render_template('thread.html', thread=thread, messages=messages, form=form)
 
 @app.route('/<thread_id>/delete')
 def delete_thread(thread_id):
