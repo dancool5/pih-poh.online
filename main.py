@@ -206,7 +206,7 @@ def about():
 
 @app.route('/donate')
 def donate():
-    return render_template('base.html', title='Донат')
+    return render_template('donate.html', title='Донат')
 
 
 @app.route('/register', methods=['GET', 'POST'])

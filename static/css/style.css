@@ -653,3 +653,14 @@ i:hover{
 	box-shadow: none;
 	cursor: pointer;
 }
+
+.donate {
+	padding-top: 5%;
+	margin-left: auto;
+	margin-right: auto;
+	display: flex;
+}
+
+.head_don {
+	text-align: center;
+}
