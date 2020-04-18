@@ -15,7 +15,9 @@
 				<div class="about_content">{{ user.about }}</div>
 			</div>
 		{% endif %}
-	<a class="change_page">Редактировать страницу</a>
+	{% if current_user.id == user.id %}
+		<pre><a class="change_page"><i class="fa fa-cog" aria-hidden="true"></i> Редактировать страницу</a></pre>
+	{% endif %}
 	</div>
 	<div class="rght_sec_user">
 		{% if current_user.id == user.id %}
