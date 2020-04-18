@@ -46,6 +46,28 @@ def send_email(to, subject, template):
     mail.send(msg)
 
 
+def is_active_threads(threads):
+    active = 0
+    for thread in threads:
+        if thread.last_message_date:
+            if thread.last_message_date < timedelta(3) + datetime.now():
+                active += 1
+    return active
+
+
+def update_threads(threads):
+    db = db_session.create_session()
+    for thread in threads:
+        messages = db.query(Message).filter(Message.thread_id == thread.id).all()
+        thread.count_messages = len(messages)
+        if messages:
+            thread.last_message_date = messages[-1].created_date
+        else:
+            thread.last_message_date = None
+        thread.is_active = bool(is_active_threads([thread]))
+    db.commit()
+
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -59,13 +81,6 @@ app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL') == 'True'
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-print(app.config['MAIL_SERVER'],
-app.config['MAIL_PORT'],
-app.config['MAIL_USE_TLS'],
-app.config['MAIL_USE_SSL'],
-app.config['MAIL_DEFAULT_SENDER'],
-app.config['MAIL_USERNAME'],
-app.config['MAIL_PASSWORD'])
 
 mail = Mail(app)
 
@@ -106,17 +121,7 @@ def forum():
             sect.last_thread_date = threads[-1].created_date
         else:
             sect.last_thread_date = None
-        active = 0
-        for thread in threads:
-            messages = db.query(Message).filter(Message.thread_id == thread.id).all()
-            thread.count_messages = len(messages)
-            messages.reverse()
-            if messages:
-                thread.last_message_date = messages[0].created_date
-            if thread.last_message_date:
-                if thread.last_message_date < timedelta(3) + datetime.now():
-                    active += 1
-        sect.active_threads = active
+        sect.active_threads = is_active_threads(threads)
     db.commit()
     return render_template('forum.html', title='Форум', sections=sections)
 
@@ -126,6 +131,7 @@ def sect(section_id):
     db = db_session.create_session()
     section = db.query(Section).filter(Section.id == section_id).first()
     threads = db.query(Thread).filter(Thread.section_id == section.id).all()
+    update_threads(threads)
     threads.reverse()
     return render_template('section.html', title=section.name, threads=threads, section=section)
 
@@ -139,8 +145,6 @@ def create_thread(section_id):
                         section_id=section_id, created_date=datetime.now())
         db.add(thread)
         section = db.query(Section).filter(Section.id == section_id).first()
-        section.count_threads = section.count_threads + 1
-        section.last_thread_date = thread.created_date
         db.commit()
         return redirect(url_for('sect', section_id=section_id))
     return render_template('create_thread.html', title='Создать тред', form=form)
@@ -151,13 +155,19 @@ def thread(section_id, thread_id):
     form = MessageForm()
     db = db_session.create_session()
     thread = db.query(Thread).filter(Thread.id == thread_id).first()
+    if not thread:
+        return redirect('/404')
     messages = db.query(Message).filter(Message.thread_id == thread.id).all()
     if form.validate_on_submit():
-        message = Message(content=form.content.data, created_date=datetime.now(), author_id=current_user.id,
-                          thread_id=thread.id)
-        db.add(message)
-        db.commit()
-        return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
+        if current_user.is_authenticated:
+            message = Message(content=form.content.data, created_date=datetime.now(), author_id=current_user.id,
+                              thread_id=thread.id)
+            db.add(message)
+            thread.last_message_date = message.created_date
+            thread.is_active = True
+            db.commit()
+            return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
+        return redirect('/404')
     return render_template('thread.html', thread=thread, messages=messages, form=form, section_id=section_id,
                            title=thread.name)
 
@@ -178,11 +188,12 @@ def delete_thread(thread_id):
 
 @app.route('/<section_id>/thread/<thread_id>/message/<message_id>/delete')
 def delete_message(thread_id, message_id, section_id):
-    print(1231)
     db = db_session.create_session()
     message = db.query(Message).filter(Message.id == message_id).first()
+    thread = db.query(Thread).filter(Thread.id == thread_id).first()
     if current_user.id == message.author_id:
         db.delete(message)
+        thread.count_messages = thread.count_messages - 1
         db.commit()
         return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
     return redirect('/404')
@@ -288,7 +299,25 @@ def user(user_id):
         title = 'Моя страница'
     else:
         title = user.nickname
-    return render_template('user.html', title=title, user=user)
+    user_age = str((datetime.now() - user.birth_date) // 365).split()[0]
+    user_threads = db.query(Thread).filter(Thread.author_id == user_id).all()
+    if len(user_threads) > 1:
+        user_threads = [user_threads[-1]]
+    update_threads(user_threads)
+    return render_template('user.html', title=title, user=user, user_age=user_age, threads=user_threads)
+
+@app.route('/user/<user_id>/threads')
+def all_user_threads(user_id):
+    db = db_session.create_session()
+    user = db.query(User).filter(User.id == user_id).first()
+    user_threads = db.query(Thread).filter(Thread.author_id == user_id).all()
+    update_threads(user_threads)
+    user_threads.reverse()
+    if current_user.id == user.id:
+        title = 'Мои треды'
+    else:
+        title = 'Треды ' + user.nickname
+    return render_template('all_threads.html', title=title, user=user, threads=user_threads)
 
 
 db_session.global_init("db/pihpoh_db.sqlite")

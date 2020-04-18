@@ -12,7 +12,7 @@ class User(SqlAlchemyBase, UserMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     nickname = sqlalchemy.Column(sqlalchemy.String, unique=True)
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    birth_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=True)
+    birth_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=True, default=None)
     statuses = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='')
     avatar = sqlalchemy.Column(sqlalchemy.String, default='')
     email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True)

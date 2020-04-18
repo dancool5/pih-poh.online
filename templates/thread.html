@@ -1,6 +1,10 @@
 {% extends "base.html" %}
+{% block head %}
+ <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='trix.css') }}" >
+ <script type= "text/javascript" src="{{ url_for('static', filename='trix.js') }}"></script>
+{% endblock %}
 {% block content %}
-	<h3><a href="{{ url_for('sect', section_id=section_id) }}"><= Назад</a></h3>
+	<a href="{{ url_for('sect', section_id=section_id) }}"><i class="fa fa-long-arrow-left fa-3x" aria-hidden="true"></i></a>
 	<div class="thread thr">
 		<div class="lft_thr">
 			<h3>{{ thread.name }}</h3>
@@ -13,14 +17,15 @@
 		</div>
 	</div>
 	{% if current_user.id == thread.author.id %}
-		<a class="del_tred" href="{{ url_for('delete_thread', thread_id=thread.id) }}">Удалить тред</a>
+		<pre><a class="del_tred" href="{{ url_for('delete_thread', thread_id=thread.id) }}"><i class="fa fa-trash-o" aria-hidden="true"></i>  Удалить тред</a></pre>
 	{% endif %}
 	<form action="" method="post" class="mes">
 		{{ form.hidden_tag() }}
 		{{ form.csrf_token }}
-		<p>
+		<p class="add_mes">
 			{{ form.content.label }}<br>
-			{{ form.content(class="form-control mes_content", rows=10) }}<br>
+			{{ form.content(class="form-control mes_content", id="x", style="display: none") }}<br>
+			<trix-editor input="x" class="editor" rows="10"></trix-editor><br>
 			{% for error in form.content.errors %}
 				<p class="alert alert-danger" role="alert">
 					{{ error }}
@@ -34,7 +39,8 @@
 		{% for message in messages %}
 			<div class="mess">
 				<div class="lft_mes">
-					<p>{{ message.content}}</p>
+					<p class="info_mes">{{ message.created_date.strftime("%Y-%m-%d %H:%M") }}</p>
+					<p>{{ message.content | safe}}</p>
 				</div>
 				<div class="rght_mes">
 					<img src="{{ url_for('static', filename='images/avatar.png') }}">
@@ -42,9 +48,9 @@
 				</div>
 			</div>
 			{% if message.author_id == current_user.id %}
-				<a class="btn_mes" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}">Удалить сообщение</a>
+				<a class="btn_mes" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 			{% else %}
-				<a class="btn_mes">Ответить</a>
+				<a class="btn_mes answer">Ответить</a>
 			{% endif %}
 		{% endfor %}
 	{% else %}

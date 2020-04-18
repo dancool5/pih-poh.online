@@ -1,16 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-	<a href="{{ url_for('forum') }}"><i class="fa fa-long-arrow-left fa-3x" aria-hidden="true"></i></a>
-	<div class="sec_head">
-		<h2>{{ section.name }}</h2>
-			{% if current_user.is_authenticated %}
-				<pre><a class="add_tred" href="{{ url_for('create_thread', section_id=section.id) }}"><i class="fa fa-plus-circle fa-1x" aria-hidden="true">  Создать тред</i></a></pre>
-			{% endif %}
-	</div>
-    {% if threads %}
+	<a href="{{ url_for('user', user_id=user.id) }}"><i class="fa fa-long-arrow-left fa-3x" aria-hidden="true"></i></a>
 		<div class="sec_thr">
 			{% for thread in threads %}
-					<div class="thread" onclick="location.href='{{ url_for('thread', section_id=section.id, thread_id=thread.id) }}'">
+					<div class="thread" onclick="location.href='{{ url_for('thread', section_id=thread.section_id, thread_id=thread.id) }}'">
 						<div class="lft_thr">
 							<div class="lft_thr_up">
 								<h3 class="lft_thr_up_lft">{{ thread.name }}</h3>
@@ -38,7 +31,4 @@
 					</div>
 			{% endfor %}
 		</div>
-    {% else %}
-        <h4>Тредов пока нет</h4>
-    {% endif %}
 {% endblock %}

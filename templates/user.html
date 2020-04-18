@@ -1,3 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
+	<div class="user_page">
+	<div class="info_user">
+		<div class="avatar" style="background-image: url({{ url_for('static', filename='images/avatar.png') }})"></div>
+		<pre class="name">Ник: </pre>{{ user.nickname }}
+		<br>
+		{% if user.birth_date %}
+			<pre class="name">Возраст: </pre>{{ user_age }}
+		{% endif %}
+		<br>
+		{% if user.about %}
+			<div class="about">
+				<pre class="name">О себе:  </pre>
+				<div class="about_content">{{ user.about }}</div>
+			</div>
+		{% endif %}
+	<a class="change_page">Редактировать страницу</a>
+	</div>
+	<div class="rght_sec_user">
+		{% if current_user.id == user.id %}
+			<h2 style="margin-left:2%;">Мои треды</h2>
+		{% else %}
+			<h2 style="margin-left:2%;">Треды {{ user.nickname }}</h2>
+		{% endif %}
+		{% if threads %}
+		<div class="sec_thr">
+			{% for thread in threads %}
+					<div class="thread" onclick="location.href='{{ url_for('thread', section_id=thread.section_id, thread_id=thread.id) }}'">
+						<div class="lft_thr">
+							<div class="lft_thr_up">
+								<h3 class="lft_thr_up_lft">{{ thread.name }}</h3>
+								<div class="info_thr">
+									<p>{{ thread.created_date.strftime("%Y-%m-%d %H:%M") }}</p>
+									<pre>Сообщений: {{ thread.count_messages }}</pre>
+									{% if thread.is_active %}
+										<p style="color: green">Статус: АКТИВ</p>
+									{% else %}
+										<p style="color: red">Статус: НЕАКТИВ</p>
+									{% endif %}
+								</div>
+							</div>
+							<hr></hr>
+							{% if thread.description|length > 60 %}
+								<p>{{ thread.description[:58] + '...' }}</p>
+							{% else %}
+								<p>{{ thread.description }}</p>
+							{% endif %}
+						</div>
+					</div>
+			{% endfor %}
+		</div>
+		<a style="margin-left:2%;" class="show_all" href="{{ url_for('all_user_threads', user_id=user.id) }}">Показать все</a>
+    {% else %}
+        <h4 style="margin-left:2%;">Тредов нет</h4>
+    {% endif %}
+	</div>
+	</div>
 {% endblock %}
