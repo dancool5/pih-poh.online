@@ -16,7 +16,7 @@
 			</div>
 		{% endif %}
 	{% if current_user.id == user.id %}
-		<pre><a class="change_page"><i class="fa fa-cog" aria-hidden="true"></i> Редактировать страницу</a></pre>
+		<pre><a class="change_page" href="{{ url_for('edit_page', user_id = user.id) }}"><i class="fa fa-cog" aria-hidden="true"></i> Редактировать страницу</a></pre>
 	{% endif %}
 	</div>
 	<div class="rght_sec_user">

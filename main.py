@@ -264,6 +264,25 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
+@app.route('/recover', methods=['GET', 'POST'])
+def recover_password():
+    form = EmailForm()
+    if form.validate_on_submit():
+        db = db_session.create_session()
+        user = db.query(User).filter(form.email.data == User.email).first()
+        if not user:
+            return render_template('recover_password.html', message="У нас нет аккаунта с такой почтой", form=form)
+        token = generate_confirmation_token(user.email)
+        confirm_url = url_for('change_pass', token=token, _external=True)
+        html = render_template('mail_recover_pass.html', confirm=confirm_url, nick=user.nickname)
+        subject = "Восстановление пароля на pih-poh.online"
+        send_email(user.email, subject, html)
+        flash('На Вашу почту отправлено письмо для восстановления пароля.', 'success')
+        return redirect('/')
+    return render_template('recover_password.html', form=form)
+
+
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -291,6 +310,25 @@ def confirm_email(token):
     return redirect('/')
 
 
+@app.route('/changepass/<token>', methods=['GET', 'POST'])
+def change_pass(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('Ссылка для смены пароля недействительна или ее срок действия истек.', 'danger')
+    db = db_session.create_session()
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        return redirect('/404')
+    form = PasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.new_password.data)
+        db.commit()
+        flash('Пароль успешно сменен!', 'success')
+        return redirect('/')
+    return render_template('change_password.html', form=form)
+
+
 @app.route('/user/<user_id>')
 def user(user_id):
     db = db_session.create_session()
@@ -305,6 +343,15 @@ def user(user_id):
         user_threads = [user_threads[-1]]
     update_threads(user_threads)
     return render_template('user.html', title=title, user=user, user_age=user_age, threads=user_threads)
+
+
+@app.route('/user/<user_id>/edit', methods=['GET', 'POST'])
+def edit_page(user_id):
+    form = EditForm()
+    db = db_session.create_session()
+    user = db.query(User).filter(User.id == user_id).first()
+    return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form)
+
 
 @app.route('/user/<user_id>/threads')
 def all_user_threads(user_id):

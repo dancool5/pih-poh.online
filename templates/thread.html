@@ -50,7 +50,7 @@
 				</div>
 				<div class="rght_mes">
 					<img src="{{ url_for('static', filename='images/avatar.png') }}">
-					<p><a href="{{ url_for('user', user_id=thread.author_id) }}">{{ message.author.nickname }}</a></p>
+					<p><a href="{{ url_for('user', user_id=message.author_id) }}">{{ message.author.nickname }}</a></p>
 				</div>
 			</div>
 			{% if message.author_id == current_user.id %}

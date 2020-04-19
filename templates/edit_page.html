@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<a href="{{ url_for('user', user_id=user.id) }}"><i class="fa fa-long-arrow-left fa-3x" aria-hidden="true"></i></a>
+	<form action="" method="post" class="edit_page">
+		{{ form.hidden_tag() }}
+		<div class="lft_edit">
+			<div class="edit_avatar" style="background-image: url({{ url_for('static', filename='images/avatar.png') }})"></div>
+			{{ form.avatar.label }}
+			{{ form.avatar(class="form-control avatar_select") }}<br>
+			{% for error in form.avatar.errors %}
+				<div class="alert alert-danger" role="alert">
+					{{ error }}
+				</div>
+			{% endfor %}
+		</div>
+	<div class="rght_edit">
+		<h1>Изменение данных</h1>
+		<p>
+			{{ form.birth_date.label }}
+			{{ form.birth_date(class="form-control") }}<br>
+			{% for error in form.birth_date.errors %}
+				<div class="alert alert-danger" role="alert">
+					{{ error }}
+				</div>
+			{% endfor %}
+		</p>
+		<p>
+			{{ form.about.label }}
+			{{ form.about(class="form-control about_edit", rows="5", cols="22") }}<br>
+			{% for error in form.about.errors %}
+				<div class="alert alert-danger" role="alert">
+					{{ error }}
+				</div>
+			{% endfor %}
+		</p>
+		<p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+		<div class="message">{{ message }}</div>
+	</div>
+	<div>
+		<a>Сменить почту</a>
+		<a>Сменить пароль</a>
+	</div>
+	</form>
+{% endblock %}
