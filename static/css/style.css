@@ -333,13 +333,18 @@ footer a{
 
 .lft_thr_up {
 	display: flex;
-	margin-top: -2%;
 	margin-right: -2%;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .info_thr {
 	display: flex;
 	flex-direction: column;
+	padding-right: 2%;
+	line-height: 1%;
+	width: auto;
+	min-width: 10vw;
 }
 
 .info_thr * {
@@ -348,8 +353,9 @@ footer a{
 
 .lft_thr_up_lft {
 	max-width: 78%;
-	display: flex;
-	justify-content: space-between;
+	align-self: flex-start;
+	margin-top: 1%;
+	padding-right: 1%;
 }
 
 .rght_sec {
@@ -471,7 +477,6 @@ footer a{
 	display: flex;
 	margin-left: 4%;
 	margin-right: 4%;
-	height: 100%;
 	margin-bottom: 0.1%;
 }
 
