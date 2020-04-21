@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, SubmitField, StringField, BooleanField, TextAreaField, FileField
+from flask_wtf.file import FileField
+from wtforms import PasswordField, SubmitField, StringField, BooleanField, TextAreaField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional, Email, EqualTo, Length
 
@@ -64,3 +65,9 @@ class EditForm(FlaskForm):
     about = TextAreaField("Информация о себе",
                           validators=[Length(max=100, message='Не пишите слишком много (максимум - 100 символов)!')])
     submit = SubmitField('Сохранить')
+
+
+class EmailChangeForm(FlaskForm):
+    email = StringField('Введите новую почту',
+                        validators=[DataRequired(), Email(message='Неккоректный адрес почты')])
+    submit = SubmitField('Отправить')

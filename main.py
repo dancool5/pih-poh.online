@@ -1,6 +1,8 @@
+import io
+
 from flask_mail import Message as MailMessage, Mail
 
-from flask import Flask, render_template, redirect, session, flash, url_for
+from flask import Flask, render_template, redirect, session, flash, url_for, request, send_file
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from itsdangerous import URLSafeTimedSerializer
 
@@ -87,6 +89,14 @@ mail = Mail(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
+@app.after_request
+def add_header(r):
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -272,15 +282,23 @@ def recover_password():
         user = db.query(User).filter(form.email.data == User.email).first()
         if not user:
             return render_template('recover_password.html', message="У нас нет аккаунта с такой почтой", form=form)
-        token = generate_confirmation_token(user.email)
-        confirm_url = url_for('change_pass', token=token, _external=True)
-        html = render_template('mail_recover_pass.html', confirm=confirm_url, nick=user.nickname)
-        subject = "Восстановление пароля на pih-poh.online"
-        send_email(user.email, subject, html)
-        flash('На Вашу почту отправлено письмо для восстановления пароля.', 'success')
-        return redirect('/')
+        return redirect(url_for('mail_recover_password', user_id=user.id))
     return render_template('recover_password.html', form=form)
 
+
+@app.route('/send_mail_to_chng_pass/<user_id>')
+def mail_recover_password(user_id):
+    db = db_session.create_session()
+    user = db.query(User).filter(User.id == user_id).first()
+    if current_user.id != user.id:
+        return redirect('/404')
+    token = generate_confirmation_token(user.email)
+    confirm_url = url_for('change_pass', token=token, _external=True)
+    html = render_template('mail_recover_pass.html', confirm=confirm_url, nick=user.nickname)
+    subject = "Смена пароля на pih-poh.online"
+    send_email(user.email, subject, html)
+    flash('На Вашу почту отправлено письмо для смены пароля.', 'success')
+    return redirect('/')
 
 
 @app.route('/logout')
@@ -329,6 +347,7 @@ def change_pass(token):
     return render_template('change_password.html', form=form)
 
 
+
 @app.route('/user/<user_id>')
 def user(user_id):
     db = db_session.create_session()
@@ -337,19 +356,35 @@ def user(user_id):
         title = 'Моя страница'
     else:
         title = user.nickname
-    user_age = str((datetime.now() - user.birth_date) // 365).split()[0]
-    user_threads = db.query(Thread).filter(Thread.author_id == user_id).all()
-    if len(user_threads) > 1:
-        user_threads = [user_threads[-1]]
-    update_threads(user_threads)
-    return render_template('user.html', title=title, user=user, user_age=user_age, threads=user_threads)
+    if user.birth_date:
+        user_age = str((datetime.now() - user.birth_date) // 365).split()[0]
+    else:
+        user_age = None
+    user_thread = db.query(Thread).filter(Thread.author_id == user_id).all()
+    if len(user_thread) > 0:
+        user_thread = user_thread[-1]
+    update_threads([user_thread])
+    return render_template('user.html', title=title, user=user, user_age=user_age, thread=user_thread)
 
 
 @app.route('/user/<user_id>/edit', methods=['GET', 'POST'])
 def edit_page(user_id):
-    form = EditForm()
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
+    if current_user.id != user.id:
+        return redirect('/404')
+    form = EditForm(data={'about': user.about, 'birth_date': user.birth_date})
+    if form.validate_on_submit():
+        if form.birth_date.data:
+            if form.birth_date.data > date.today():
+                return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form,
+                                       message='Вы не могли родиться в будущем!')
+        user.about = form.about.data
+        user.birth_date = form.birth_date.data
+        if form.avatar.data:
+            user.avatar = request.files[form.avatar.name].read()
+        db.commit()
+        return redirect(url_for('user', user_id=user.id))
     return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form)
 
 
@@ -365,6 +400,15 @@ def all_user_threads(user_id):
     else:
         title = 'Треды ' + user.nickname
     return render_template('all_threads.html', title=title, user=user, threads=user_threads)
+
+
+@app.route('/user/<user_id>/avatar')
+def user_avatar(user_id):
+    db = db_session.create_session()
+    user = db.query(User).filter(User.id == user_id).first()
+    if user.avatar:
+        return send_file(io.BytesIO(user.avatar), mimetype='image/*')
+    return send_file(io.BytesIO(open('static/images/avatar.png', 'rb').read()), mimetype='image/*')
 
 
 db_session.global_init("db/pihpoh_db.sqlite")

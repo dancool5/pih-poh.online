@@ -32,7 +32,7 @@
 							{% endif %}
 						</div>
 						<div class="rght_thr">
-							<img src="{{ url_for('static', filename='images/avatar.png') }}">
+							<div class="avatar av_sect" style="background-image: url({{ url_for('user_avatar', user_id=thread.author.id) }})"></div>
 							<p><a href="{{ url_for('user', user_id=thread.author_id) }}">{{ thread.author.nickname }}</a></p>
 						</div>
 					</div>

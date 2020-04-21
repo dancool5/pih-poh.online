@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <a href="{{ url_for('user', user_id=user.id) }}"><i class="fa fa-long-arrow-left fa-3x" aria-hidden="true"></i></a>
-	<form action="" method="post" class="edit_page">
+	<form action="" method="post" class="edit_page" enctype="multipart/form-data">
 		{{ form.hidden_tag() }}
+		{{ form.csrf_token }}
 		<div class="lft_edit">
-			<div class="edit_avatar" style="background-image: url({{ url_for('static', filename='images/avatar.png') }})"></div>
+			<div class="edit_avatar" style="background-image: url({{ url_for('user_avatar', user_id=user.id) }})"></div>
 			{{ form.avatar.label }}
 			{{ form.avatar(class="form-control avatar_select") }}<br>
 			{% for error in form.avatar.errors %}
@@ -16,12 +17,12 @@
 	<div class="rght_edit">
 		<h1>Изменение данных</h1>
 		<p>
-			{{ form.birth_date.label }}
+			{{ form.birth_date.label }}<br>
 			{{ form.birth_date(class="form-control") }}<br>
 			{% for error in form.birth_date.errors %}
-				<div class="alert alert-danger" role="alert">
+				<p class="alert alert-danger" role="alert">
 					{{ error }}
-				</div>
+				</p>
 			{% endfor %}
 		</p>
 		<p>
@@ -36,9 +37,9 @@
 		<p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
 		<div class="message">{{ message }}</div>
 	</div>
-	<div>
-		<a>Сменить почту</a>
-		<a>Сменить пароль</a>
+	<div class="othr_edit">
+		<a href="{{ url_for('mail_recover_password', user_id=user.id, number=2) }}">Сменить пароль</a>
+		<h4 style="color: #ED4C4C;">Ник и почту никак изменить нельзя!</h4>
 	</div>
 	</form>
 {% endblock %}
