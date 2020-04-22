@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block head %}
+ <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='trix.css') }}">
+ <script type= "text/javascript" src="{{ url_for('static', filename='trix.js') }}"></script>
+<script>
+    function clearr() {
+        document.getElementById('answer').value = "";
+        document.getElementById('cl').remove();
+    }
+ </script>
+{% endblock %}
+{% block content %}
+    <a href="{{ url_for('thread', section_id=section_id, thread_id=thread_id) }}"><i class="fa fa-long-arrow-left fa-3x" aria-hidden="true"></i></a>
+    <h3>Редактирование сообщения</h3>
+    <div class="mess">
+        <div class="lft_mes" style="width: 100%;">
+            <div class="info_mes">
+                {{ mess.created_date.strftime("%Y-%m-%d %H:%M") }}
+            </div>
+            <div class="mes_cont">
+                {% if mess.answers %}
+                    <pre><a href="{{ url_for('user', user_id=mess.answers_user_id) }}">{{ mess.answers }}</a></pre>
+                {% endif %}
+                {{ mess.content | safe}}
+            </div>
+        </div>
+        <div class="rght_mes">
+            <div class="avatar av_thr" style="background-image: url({{ url_for('user_avatar', user_id=mess.author.id) }})"></div>
+            <p><a href="{{ url_for('user', user_id=mess.author_id) }}">{{ mess.author.nickname }}</a></p>
+        </div>
+    </div>
+    <form action="" method="post" class="mes">
+		{{ form.hidden_tag() }}
+		{{ form.csrf_token }}
+		<p class="add_mes">
+			<h3 style="margin-top: -2.5%;">Сообщение</h3>
+			<div style="display: flex;" id="ansss">
+			    {% if mess.answers %}
+                    <a class='clearr' id='cl' onclick='clearr()'>Удалить |</a>
+                {% endif %}
+				{{ form.answers(class="answers", id="answer") }}
+			</div>
+			{{ form.content(class="form-control mes_content", id="x", style="display: none") }}<br>
+			<trix-editor input="x" class="editor" rows="10" id="comment"></trix-editor><br>
+			{% for error in form.content.errors %}
+				<p class="alert alert-danger" role="alert">
+					{{ error }}
+				</p>
+			{% endfor %}
+		</p>
+		<p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+		<p class="message">{{message}}</p>
+	</form>
+{% endblock %}

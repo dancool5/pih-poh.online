@@ -40,9 +40,9 @@ class ThreadForm(FlaskForm):
 class MessageForm(FlaskForm):
     answers = StringField('')
     content = TextAreaField('',
-                            validators=[DataRequired(),
-                                        Length(max=1500,
-                                               message='Сообщение должно содержать неболее 1500 символов')])
+                            validators=[DataRequired(), Length(min=1, max=1500,
+                                                               message='Сообщение не должно быть пустым' +
+                                                                       ' и содержать неболее 1500 символов')])
     submit = SubmitField('Отправить')
 
 
@@ -54,8 +54,10 @@ class EmailForm(FlaskForm):
 
 class PasswordForm(FlaskForm):
     new_password = PasswordField('Новый пароль',
-                             validators=[DataRequired(), EqualTo('new_password_again', message='Пароли несовпадают'),
-                                         Length(min=5, max=20, message='Пароль должен содержать от 5 до 20 символов')])
+                                 validators=[DataRequired(),
+                                             EqualTo('new_password_again', message='Пароли несовпадают'),
+                                             Length(min=5, max=20,
+                                                    message='Пароль должен содержать от 5 до 20 символов')])
     new_password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
     submit = SubmitField('Сменить')
 

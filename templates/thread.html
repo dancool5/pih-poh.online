@@ -57,7 +57,13 @@
 		{% for message in messages %}
 			<div class="mess">
 				<div class="lft_mes">
-					<p class="info_mes">{{ message.created_date.strftime("%Y-%m-%d %H:%M") }}</p>
+					<div class="info_mes">
+						{{ message.created_date.strftime("%Y-%m-%d %H:%M") }}
+						{% if message.redact_date %}
+							<br>
+							(редакт. {{ message.redact_date.strftime("%Y-%m-%d %H:%M") }})
+						{% endif %}
+					</div>
 					<div class="mes_cont">
 						{% if message.answers %}
 							<pre><a href="{{ url_for('user', user_id=message.answers_user_id) }}">{{ message.answers }}</a></pre>
@@ -71,7 +77,10 @@
 				</div>
 			</div>
 			{% if message.author_id == current_user.id %}
-				<a class="btn_mes" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+				<div class="for_mes">
+					<a class="btn_mes b_1" href="{{ url_for('edit_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+					<a class="btn_mes b_2" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+				</div>
 			{% else %}
 				<a class="btn_mes answer" onclick="answ('{{ message.author.nickname }}')">Ответить</a>
 			{% endif %}

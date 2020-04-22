@@ -509,19 +509,10 @@ footer a{
 }
 
 .btn_mes {
-	text-decoration: none;
-	font-weight: 900;
-	font-size: 0.8vw;
-	border: 2px solid;
-	border-radius: 0px 0px 15px 15px;
 	padding: 1%;
-	margin-left: 4%;
-	margin-bottom: 3%;
-	padding-top: 1.5%;
-	margin-top: -1%;
-	display: flex;
-	justify-content: center;
 	width: 2%;
+	display: inline-block;
+	text-align: center;
 }
 
 .answer {
@@ -529,7 +520,6 @@ footer a{
 }	
 
 .btn_mes:hover {
-	border: 2px solid #67C7F1;
 	cursor: pointer;
 }
 
@@ -831,3 +821,21 @@ i:hover{
 	display: inline-block;
 }
 
+.for_mes {
+	margin-left: 4%;
+	margin-bottom: 2%;
+	margin-top: -0.4%;
+}
+
+.b_1 {
+	border: 2px solid;
+	border-radius: 0px 0px 0px 15px;
+	border-right-width: 2px;
+}
+
+.b_2 {
+	border: 2px solid;
+	border-radius: 0px 0px 15px 0px;
+	border-left-width: 1px;
+	margin-left: -0.5%;
+}

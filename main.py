@@ -208,6 +208,24 @@ def delete_message(thread_id, message_id, section_id):
     return redirect('/404')
 
 
+@app.route('/<section_id>/thread/<thread_id>/message/<message_id>/edit', methods=['GET', 'POST'])
+def edit_message(thread_id, message_id, section_id):
+    db = db_session.create_session()
+    message = db.query(Message).filter(Message.id == message_id).first()
+    if current_user.id == message.author_id:
+        form = MessageForm(data={'answers': message.answers, 'content': message.content})
+        if form.validate_on_submit():
+            print(211231)
+            message.answers = form.answers.data
+            message.content = form.content.data
+            message.redact_date = datetime.now()
+            db.commit()
+            return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
+        return render_template('edit_message.html', title='Редактирование сообщения', form=form, mess=message,
+                               thread_id=thread_id, section_id=section_id)
+    return redirect('/404')
+
+
 @app.route('/about')
 def about():
     return render_template('about.html', title='О проекте')
