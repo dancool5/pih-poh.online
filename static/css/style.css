@@ -98,6 +98,7 @@ main a {
 main a:hover{
 	color: #67C7F1;
 	text-decoration: line-underline;
+	cursor: pointer;
 }
 
 main a:hover * {
@@ -547,10 +548,7 @@ footer a{
 
 .editor {
 	width: 97.5%;
-}
-
-#trix-toolbar-1 {
-	width: 75.5%;
+	display: flex;
 }
 
 .editor * {
@@ -560,9 +558,10 @@ footer a{
 #trix-toolbar-1 {
 	margin-top: -4%;
 	width: 100%;
+	display: flex;
 }
 
-.trix-button--icon-link, .trix-button--icon-quote, .trix-button--icon-heading-1, .trix-button--icon-decrease-nesting-level, .trix-button--icon-increase-nesting-level{
+.trix-button--icon-link, .trix-button--icon-quote, .trix-button--icon-heading-1, .trix-button--icon-decrease-nesting-level, .trix-button--icon-increase-nesting-level, .trix-button--icon-code{
 	display: none;
 }
 
@@ -808,3 +807,27 @@ i:hover{
 	border-width: 3px;
 	outline-width: 3px;
 }
+
+.answers {
+	font-size: 1.2vw;
+	border: none;
+	width: auto;
+	padding: 0;
+	display: inline-block;
+	margin-bottom: 4%;
+	display: flex;
+}
+
+.clearr {
+	display: flex;
+	padding-top: 1%;
+	margin-right: 1%;
+	width: auto;
+	height: 1%;
+	margin-top: -1%;
+}
+
+.mes_cont * {
+	display: inline-block;
+}
+

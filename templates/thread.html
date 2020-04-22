@@ -4,8 +4,17 @@
  <script type= "text/javascript" src="{{ url_for('static', filename='trix.js') }}"></script>
  <script>
 	function answ(nick) {
-		document.getElementById('comment').value = '@' + nick + ', ';
+		let a = document.getElementById('answer').value;	
+		document.getElementById('answer').value = "@" + nick + ", ";
+		console.log(a)
+		if (!a) {
+			document.getElementById('ansss').insertAdjacentHTML('afterBegin',  "<a class='clearr' id='cl' onclick='clearr()'>Удалить |</a>");
+		}
 		window.scrollTo(0, 0);
+	}
+	function clearr() {
+		document.getElementById('answer').value = "";	
+		document.getElementById('cl').remove();
 	}
  </script>
 {% endblock %}
@@ -29,7 +38,10 @@
 		{{ form.hidden_tag() }}
 		{{ form.csrf_token }}
 		<p class="add_mes">
-			{{ form.content.label }}<br>
+			<h3 style="margin-top: -2.5%;">Сообщение</h3>
+			<div style="display: flex;" id="ansss">
+				{{ form.answers(class="answers", id="answer") }}
+			</div>
 			{{ form.content(class="form-control mes_content", id="x", style="display: none") }}<br>
 			<trix-editor input="x" class="editor" rows="10" id="comment"></trix-editor><br>
 			{% for error in form.content.errors %}
@@ -46,10 +58,15 @@
 			<div class="mess">
 				<div class="lft_mes">
 					<p class="info_mes">{{ message.created_date.strftime("%Y-%m-%d %H:%M") }}</p>
-					<p>{{ message.content | safe}}</p>
+					<div class="mes_cont">
+						{% if message.answers %}
+							<pre><a href="{{ url_for('user', user_id=message.answers_user_id) }}">{{ message.answers }}</a></pre>
+						{% endif %}
+						{{ message.content | safe}}
+					</div>
 				</div>
 				<div class="rght_mes">
-					<div class="avatar av_thr" style="background-image: url({{ url_for('user_avatar', user_id=thread.author.id) }})"></div>
+					<div class="avatar av_thr" style="background-image: url({{ url_for('user_avatar', user_id=message.author.id) }})"></div>
 					<p><a href="{{ url_for('user', user_id=message.author_id) }}">{{ message.author.nickname }}</a></p>
 				</div>
 			</div>

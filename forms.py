@@ -38,7 +38,8 @@ class ThreadForm(FlaskForm):
 
 
 class MessageForm(FlaskForm):
-    content = TextAreaField('Сообщение',
+    answers = StringField('')
+    content = TextAreaField('',
                             validators=[DataRequired(),
                                         Length(max=1500,
                                                message='Сообщение должно содержать неболее 1500 символов')])

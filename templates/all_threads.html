@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 	<a href="{{ url_for('user', user_id=user.id) }}"><i class="fa fa-long-arrow-left fa-3x" aria-hidden="true"></i></a>
+	{% if current_user.id == user.id %}
+		<h2>Мои треды</h2>
+	{% else %}
+		<h2>Треды {{ user.nickname }}</h2>
+	{% endif %}
 		<div class="sec_thr">
 			{% for thread in threads %}
 					<div class="thread" onclick="location.href='{{ url_for('thread', section_id=thread.section_id, thread_id=thread.id) }}'">

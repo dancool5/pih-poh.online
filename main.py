@@ -90,14 +90,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-@app.after_request
-def add_header(r):
-    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    r.headers["Pragma"] = "no-cache"
-    r.headers["Expires"] = "0"
-    r.headers['Cache-Control'] = 'public, max-age=0'
-    return r
-
 @login_manager.user_loader
 def load_user(user_id):
     db = db_session.create_session()
@@ -170,8 +162,15 @@ def thread(section_id, thread_id):
     messages = db.query(Message).filter(Message.thread_id == thread.id).all()
     if form.validate_on_submit():
         if current_user.is_authenticated:
+            print(form.answers.data)
             message = Message(content=form.content.data, created_date=datetime.now(), author_id=current_user.id,
-                              thread_id=thread.id)
+                              thread_id=thread.id, answers=form.answers.data)
+            if message.answers:
+                print(message.answers[1:-2])
+                answers_user = db.query(User).filter(User.nickname == message.answers[1:-2]).first()
+                message.answers_user_id = answers_user.id
+
+
             db.add(message)
             thread.last_message_date = message.created_date
             thread.is_active = True
@@ -230,6 +229,8 @@ def register():
                 message = "Вы не могли родится в будущем!"
         elif form.captcha.data != session['captcha']:
             message = "Капча введена неверно"
+        elif [ch for ch in form.nickname.data if ch not in string.ascii_letters + '1234567890_-/']:
+            message = "В нике можно использовать только cимволы a-z, A-Z, 0-9, _-/"
         elif db.query(User).filter(User.email == form.email.data).first():
             message = "На эту почту уже зарегистрирован пользователь"
         elif db.query(User).filter(User.nickname == form.nickname.data).first():
@@ -361,9 +362,9 @@ def user(user_id):
     else:
         user_age = None
     user_thread = db.query(Thread).filter(Thread.author_id == user_id).all()
-    if len(user_thread) > 0:
+    if user_thread:
         user_thread = user_thread[-1]
-    update_threads([user_thread])
+        update_threads([user_thread])
     return render_template('user.html', title=title, user=user, user_age=user_age, thread=user_thread)
 
 
