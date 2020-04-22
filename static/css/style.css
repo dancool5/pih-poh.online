@@ -529,6 +529,7 @@ footer a{
 	color: #528AA8;
 	font-size: 0.9vw;
 	font-weight: 600;
+	margin-bottom: 1%;
 }
 
 .add_mes {
@@ -838,4 +839,13 @@ i:hover{
 	border-radius: 0px 0px 15px 0px;
 	border-left-width: 1px;
 	margin-left: -0.5%;
+}
+
+.b_3 {
+	border: 2px solid;
+	border-radius: 0px 0px 15px 15px;
+	width: auto;
+	margin-bottom: 2%;
+	margin-top: -0.4%;
+	margin-left: 4%;
 }

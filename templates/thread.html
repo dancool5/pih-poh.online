@@ -82,7 +82,7 @@
 					<a class="btn_mes b_2" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 				</div>
 			{% else %}
-				<a class="btn_mes answer" onclick="answ('{{ message.author.nickname }}')">Ответить</a>
+				<a class="btn_mes b_3" onclick="answ('{{ message.author.nickname }}')">Ответить</a>
 			{% endif %}
 		{% endfor %}
 	{% else %}
