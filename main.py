@@ -15,7 +15,7 @@ from data.message import Message
 from forms import *
 from data import db_session
 from captcha.image import ImageCaptcha
-import random
+from random import randint, choice
 import string
 import base64
 from dotenv import load_dotenv
@@ -23,7 +23,7 @@ import os
 
 
 def create_captcha():
-    text = ''.join([random.choice(string.ascii_lowercase) for i in range(5)])
+    text = ''.join([choice(string.ascii_lowercase) for i in range(5)])
     image = ImageCaptcha()
     encode = base64.b64encode(image.generate(text).getvalue())
     return text, encode
@@ -402,6 +402,10 @@ def edit_page(user_id):
         user.birth_date = form.birth_date.data
         if form.avatar.data:
             user.avatar = request.files[form.avatar.name].read()
+            cash_number = randint(1, 1000)
+            while cash_number == user.cash_number:
+                cash_number = randint(1, 1000)
+            user.cash_number = cash_number
         db.commit()
         return redirect(url_for('user', user_id=user.id))
     return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form)
@@ -421,8 +425,8 @@ def all_user_threads(user_id):
     return render_template('all_threads.html', title=title, user=user, threads=user_threads)
 
 
-@app.route('/user/<user_id>/avatar')
-def user_avatar(user_id):
+@app.route('/user/<user_id>/avatar/?n=<cash_number>')
+def user_avatar(user_id, cash_number):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
     if user.avatar:

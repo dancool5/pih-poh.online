@@ -27,7 +27,7 @@
 			<p>{{ thread.description }}</p>
 		</div>
 		<div class="rght_thr">
-			<div class="avatar av_sect" style="background-image: url({{ url_for('user_avatar', user_id=thread.author.id) }})"></div>
+			<div class="avatar av_sect" style="background-image: url({{ url_for('user_avatar', user_id=thread.author.id, cash_number=thread.author.cash_number) }})"></div>
 			<p><a href="{{ url_for('user', user_id=thread.author_id) }}">{{ thread.author.nickname }}</a></p>
 		</div>
 	</div>
@@ -72,7 +72,7 @@
 					</div>
 				</div>
 				<div class="rght_mes">
-					<div class="avatar av_thr" style="background-image: url({{ url_for('user_avatar', user_id=message.author.id) }})"></div>
+					<div class="avatar av_thr" style="background-image: url({{ url_for('user_avatar', user_id=message.author.id, cash_number=message.author.cash_number) }})"></div>
 					<p><a href="{{ url_for('user', user_id=message.author_id) }}">{{ message.author.nickname }}</a></p>
 				</div>
 			</div>

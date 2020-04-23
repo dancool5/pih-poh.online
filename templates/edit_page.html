@@ -5,7 +5,7 @@
 		{{ form.hidden_tag() }}
 		{{ form.csrf_token }}
 		<div class="lft_edit">
-			<div class="edit_avatar" style="background-image: url({{ url_for('user_avatar', user_id=user.id) }})"></div>
+			<div class="edit_avatar" style="background-image: url({{ url_for('user_avatar', user_id=user.id, cash_number=user.cash_number) }})"></div>
 			{{ form.avatar.label }}
 			{{ form.avatar(class="form-control avatar_select") }}<br>
 			{% for error in form.avatar.errors %}

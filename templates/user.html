@@ -2,7 +2,7 @@
 {% block content %}
 	<div class="user_page">
 	<div class="info_user">
-		<div class="avatar" style="background-image: url('{{ url_for('user_avatar', user_id=user.id) }}')"></div>
+		<div class="avatar" style="background-image: url('{{ url_for('user_avatar', user_id=user.id, cash_number=user.cash_number) }}')"></div>
 		<pre class="name">Ник: </pre>{{ user.nickname }}
 		<br>
 		{% if user.birth_date %}
