@@ -403,9 +403,13 @@ def edit_page(user_id):
         user.birth_date = form.birth_date.data
         if form.avatar.data:
             avatar = request.files[form.avatar.name].read()
+            print(avatar)
             if len(avatar) > 1024 * 1024:
                 return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form,
                                        message='Размер аватара не должен превышать 1Mb')
+            if not [True for extension in ["JFIF", "PNG", "GIF", "WEBP"] if extension in str(avatar)]:
+                return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form,
+                                       message='Допустимые расширения аватара: JEPG, PNG, GIF, WEBP')
             user.avatar = avatar
             cash_number = randint(1, 1000)
             while cash_number == user.cash_number:
