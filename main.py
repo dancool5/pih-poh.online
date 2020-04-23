@@ -1,4 +1,5 @@
 import io
+from os.path import getsize
 
 from flask_mail import Message as MailMessage, Mail
 
@@ -401,7 +402,11 @@ def edit_page(user_id):
         user.about = form.about.data
         user.birth_date = form.birth_date.data
         if form.avatar.data:
-            user.avatar = request.files[form.avatar.name].read()
+            avatar = request.files[form.avatar.name].read()
+            if len(avatar) > 1024 * 1024:
+                return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form,
+                                       message='Размер аватара не должен превышать 1Mb')
+            user.avatar = avatar
             cash_number = randint(1, 1000)
             while cash_number == user.cash_number:
                 cash_number = randint(1, 1000)
