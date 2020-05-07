@@ -2,7 +2,7 @@ import io
 
 from flask_mail import Message as MailMessage, Mail
 
-from flask import Flask, render_template, redirect, session, flash, url_for, request, send_file
+from flask import Flask, render_template, redirect, session, flash, url_for, request, send_file, abort
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from itsdangerous import URLSafeTimedSerializer
 
@@ -22,6 +22,7 @@ from dotenv import load_dotenv
 import os
 
 from seeder import seed
+from services.forum_service import *
 
 
 def create_captcha():
@@ -50,26 +51,9 @@ def send_email(to, subject, template):
     mail.send(msg)
 
 
-def is_active_threads(threads):
-    active = 0
-    for thread in threads:
-        if thread.last_message_date:
-            if thread.last_message_date > datetime.now() - timedelta(3):
-                active += 1
-    return active
-
-
-def update_threads(threads):
-    db = db_session.create_session()
-    for thread in threads:
-        messages = db.query(Message).filter(Message.thread_id == thread.id).all()
-        thread.count_messages = len(messages)
-        if messages:
-            thread.last_message_date = messages[-1].created_date
-        else:
-            thread.last_message_date = None
-        thread.is_active = bool(is_active_threads([thread]))
-    db.commit()
+def is_page_exist(obj):
+    if not obj:
+        return abort(404)
 
 
 load_dotenv()
@@ -118,15 +102,7 @@ def news_line():
 def forum():
     db = db_session.create_session()
     sections = db.query(Section).all()
-    for sect in sections:
-        threads = db.query(Thread).filter(Thread.section_id == sect.id).all()
-        sect.count_threads = len(threads)
-        if threads:
-            sect.last_thread_date = threads[-1].created_date
-        else:
-            sect.last_thread_date = None
-        sect.active_threads = is_active_threads(threads)
-    db.commit()
+    update_forum()
     return render_template('forum.html', title='Форум', sections=sections)
 
 
@@ -144,12 +120,7 @@ def sect(section_id):
 def create_thread(section_id):
     form = ThreadForm()
     if form.validate_on_submit():
-        db = db_session.create_session()
-        thread = Thread(name=form.name.data, description=form.description.data, author_id=current_user.id,
-                        section_id=section_id, created_date=datetime.now())
-        db.add(thread)
-        section = db.query(Section).filter(Section.id == section_id).first()
-        db.commit()
+        create_thr(form.name.data, form.description.data, section_id)
         return redirect(url_for('sect', section_id=section_id))
     return render_template('create_thread.html', title='Создать тред', form=form)
 
@@ -159,73 +130,58 @@ def thread(section_id, thread_id):
     form = MessageForm()
     db = db_session.create_session()
     thread = db.query(Thread).filter(Thread.id == thread_id).first()
-    if not thread:
-        return redirect('/404')
+    is_page_exist(thread)
     messages = db.query(Message).filter(Message.thread_id == thread.id).all()
+
     if form.validate_on_submit():
-        if current_user.is_authenticated:
-            print(form.answers.data)
-            message = Message(content=form.content.data, created_date=datetime.now(), author_id=current_user.id,
-                              thread_id=thread.id, answers=form.answers.data)
-            if message.answers:
-                print(message.answers[1:-2])
-                answers_user = db.query(User).filter(User.nickname == message.answers[1:-2]).first()
-                message.answers_user_id = answers_user.id
+        if not current_user.is_authenticated:
+            return abort(404)
+        add_mess(form.content.data, thread.id, form.answers.data)
+        return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
 
-
-            db.add(message)
-            thread.last_message_date = message.created_date
-            thread.is_active = True
-            db.commit()
-            return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
-        return redirect('/404')
     return render_template('thread.html', thread=thread, messages=messages, form=form, section_id=section_id,
                            title=thread.name)
+
 
 @app.route('/<thread_id>/delete')
 def delete_thread(thread_id):
     db = db_session.create_session()
     thread = db.query(Thread).filter(Thread.id == thread_id).first()
     section_id = thread.section_id
-    messages = db.query(Message).filter(Message.thread_id == thread_id).all()
-    if current_user.id == thread.author_id:
-        for message in messages:
-            db.delete(message)
-        db.delete(thread)
-        db.commit()
-        return redirect(url_for('sect', section_id=section_id))
-    return redirect('/404')
+
+    if not current_user.id == thread.author_id:
+        return abort(404)
+
+    del_thr(thread_id)
+    return redirect(url_for('sect', section_id=section_id))
 
 
 @app.route('/<section_id>/thread/<thread_id>/message/<message_id>/delete')
 def delete_message(thread_id, message_id, section_id):
     db = db_session.create_session()
     message = db.query(Message).filter(Message.id == message_id).first()
-    thread = db.query(Thread).filter(Thread.id == thread_id).first()
-    if current_user.id == message.author_id:
-        db.delete(message)
-        thread.count_messages = thread.count_messages - 1
-        db.commit()
-        return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
-    return redirect('/404')
+
+    if not current_user.id == message.author_id:
+        return abort(404)
+
+    del_mes(message_id, thread_id)
+    return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
 
 
 @app.route('/<section_id>/thread/<thread_id>/message/<message_id>/edit', methods=['GET', 'POST'])
 def edit_message(thread_id, message_id, section_id):
     db = db_session.create_session()
     message = db.query(Message).filter(Message.id == message_id).first()
-    if current_user.id == message.author_id:
-        form = MessageForm(data={'answers': message.answers, 'content': message.content})
-        if form.validate_on_submit():
-            print(211231)
-            message.answers = form.answers.data
-            message.content = form.content.data
-            message.redact_date = datetime.now()
-            db.commit()
-            return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
-        return render_template('edit_message.html', title='Редактирование сообщения', form=form, mess=message,
-                               thread_id=thread_id, section_id=section_id)
-    return redirect('/404')
+
+    if not current_user.id == message.author_id:
+        return abort(404)
+
+    form = MessageForm(data={'answers': message.answers, 'content': message.content})
+    if form.validate_on_submit():
+        edit_mess(message_id, form.answers.data, form.content.data)
+        return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
+    return render_template('edit_message.html', title='Редактирование сообщения', form=form, mess=message,
+                           thread_id=thread_id, section_id=section_id)
 
 
 @app.route('/about')
@@ -312,7 +268,7 @@ def mail_recover_password(user_id):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
     if current_user.id != user.id:
-        return redirect('/404')
+        return abort(404)
     token = generate_confirmation_token(user.email)
     confirm_url = url_for('change_pass', token=token, _external=True)
     html = render_template('mail_recover_pass.html', confirm=confirm_url, nick=user.nickname)
@@ -337,8 +293,7 @@ def confirm_email(token):
         flash('Ссылка подтверждения недействительна или ее срок действия истек.', 'danger')
     db = db_session.create_session()
     user = db.query(User).filter(User.email == email).first()
-    if not user:
-        return redirect('/404')
+    is_page_exist(user)
     if user.is_confirmed:
         flash('Аккаунт уже подтвержден.', 'success')
     else:
@@ -357,8 +312,7 @@ def change_pass(token):
         flash('Ссылка для смены пароля недействительна или ее срок действия истек.', 'danger')
     db = db_session.create_session()
     user = db.query(User).filter(User.email == email).first()
-    if not user:
-        return redirect('/404')
+    is_page_exist(user)
     form = PasswordForm()
     if form.validate_on_submit():
         user.set_password(form.new_password.data)
@@ -373,6 +327,7 @@ def change_pass(token):
 def user(user_id):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
+    is_page_exist(user)
     if current_user.id == user.id:
         title = 'Моя страница'
     else:
@@ -393,7 +348,7 @@ def edit_page(user_id):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
     if current_user.id != user.id:
-        return redirect('/404')
+        return abort(404)
     form = EditForm(data={'about': user.about, 'birth_date': user.birth_date})
     if form.validate_on_submit():
         if form.birth_date.data:
@@ -423,6 +378,7 @@ def edit_page(user_id):
 def all_user_threads(user_id):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
+    is_page_exist(user)
     user_threads = db.query(Thread).filter(Thread.author_id == user_id).all()
     update_threads(user_threads)
     user_threads.reverse()
