@@ -832,6 +832,7 @@ i:hover{
 	border: 2px solid;
 	border-radius: 0px 0px 0px 15px;
 	border-right-width: 2px;
+	content: attr(title);
 }
 
 .b_2 {
@@ -839,6 +840,7 @@ i:hover{
 	border-radius: 0px 0px 15px 0px;
 	border-left-width: 1px;
 	margin-left: -0.5%;
+	content: attr(title);
 }
 
 .b_3 {
@@ -848,4 +850,11 @@ i:hover{
 	margin-bottom: 2%;
 	margin-top: -0.4%;
 	margin-left: 4%;
+}
+
+.nick {
+	width: 100%;
+	text-align: center;
+	font-size: 2vw;
+	font-weight: bold;
 }

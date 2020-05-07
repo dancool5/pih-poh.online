@@ -1,5 +1,4 @@
 import io
-from os.path import getsize
 
 from flask_mail import Message as MailMessage, Mail
 
@@ -21,6 +20,8 @@ import string
 import base64
 from dotenv import load_dotenv
 import os
+
+from seeder import seed
 
 
 def create_captcha():
@@ -53,7 +54,7 @@ def is_active_threads(threads):
     active = 0
     for thread in threads:
         if thread.last_message_date:
-            if thread.last_message_date < timedelta(3) + datetime.now():
+            if thread.last_message_date > datetime.now() - timedelta(3):
                 active += 1
     return active
 
@@ -411,9 +412,7 @@ def edit_page(user_id):
                 return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form,
                                        message='Допустимые расширения аватара: JEPG, PNG, GIF, WEBP')
             user.avatar = avatar
-            cash_number = randint(1, 1000)
-            while cash_number == user.cash_number:
-                cash_number = randint(1, 1000)
+            cash_number = user.cash_number + 1 if user.cash_number < 100 else 0
             user.cash_number = cash_number
         db.commit()
         return redirect(url_for('user', user_id=user.id))
@@ -448,22 +447,7 @@ db_session.global_init("db/pihpoh_db.sqlite")
 db = db_session.create_session()
 
 if len(db.query(Section).all()) == 0:
-    sections = {'Русская музыка': ['Описание Описание Описание Описание Описание Описание Описание', 'russian_music'],
-                'Зарубежная музыка': ['Описание Описание Описание Описание Описание Описание', 'foreign_music'],
-                'Cтихи | поэзия': ['Описание Описание Описание Описание Описание Описание Описание', 'poetry'],
-                'Олдскул': ['Описание Описание Описание Описание Описание Описание Описание Описание', 'oldschool'],
-                'Фрешмены': ['Описание Описание Описание Описание Описание Описание Описание Описание', 'freshmen'],
-                'Битмейкинг': ['Описание Описание Описание Описание Описание Описание Описание Описание', 'beatmaking'],
-                'Мероприятия': ['Описание Описание Описание Описание Описание Описание Описание Описание', 'events'],
-                'Вопросы новичков': ['Описание Описание Описание Описание Описание Описание', 'novice_questions'],
-                'Флуд': ['Описание Описание Описание Описание Описание Описание Описание Описание Описание', 'flood'],
-                'Остальное': ['Описание', 'other']
-                }
-    for name, arguments in sections.items():
-        description, address = arguments[0], arguments[1]
-        section = Section(name=name, description=description, address=address)
-        db.add(section)
-    db.commit()
+    seed()
 
 if __name__ == '__main__':
     app.run(port=5000, host='127.0.0.1')

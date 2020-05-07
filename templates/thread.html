@@ -78,8 +78,8 @@
 			</div>
 			{% if message.author_id == current_user.id %}
 				<div class="for_mes">
-					<a class="btn_mes b_1" href="{{ url_for('edit_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-					<a class="btn_mes b_2" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+					<a class="btn_mes b_1" href="{{ url_for('edit_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}" title="Редактировать"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+					<a class="btn_mes b_2" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 				</div>
 			{% else %}
 				<a class="btn_mes b_3" onclick="answ('{{ message.author.nickname }}')">Ответить</a>
