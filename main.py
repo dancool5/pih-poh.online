@@ -1,12 +1,9 @@
 import io
 
-from flask_mail import Message as MailMessage, Mail
+from flask_mail import Mail
 
-from flask import Flask, render_template, redirect, session, flash, url_for, request, send_file, abort
+from flask import Flask, redirect, flash, request, send_file, abort
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
-from itsdangerous import URLSafeTimedSerializer
-
-from datetime import date, datetime, timedelta
 
 from data.user import User
 from data.section import Section
@@ -15,14 +12,14 @@ from data.message import Message
 from forms import *
 from data import db_session
 from captcha.image import ImageCaptcha
-from random import randint, choice
-import string
+from random import choice
 import base64
 from dotenv import load_dotenv
 import os
 
 from seeder import seed
 from services.auth_service import *
+from services.email_service import *
 from services.forum_service import *
 
 
@@ -31,25 +28,6 @@ def create_captcha():
     image = ImageCaptcha()
     encode = base64.b64encode(image.generate(text).getvalue())
     return text, encode
-
-
-def generate_confirmation_token(email):
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
-
-
-def confirm_token(token):
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    try:
-        email = serializer.loads(token, salt=app.config['SECURITY_PASSWORD_SALT'], max_age=3600)
-    except:
-        return False
-    return email
-
-
-def send_email(to, subject, template):
-    msg = MailMessage(subject, recipients=[to], html=template, sender=app.config['MAIL_DEFAULT_SENDER'])
-    mail.send(msg)
 
 
 def is_page_exist(obj):

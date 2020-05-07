@@ -5,7 +5,7 @@ from flask import session, render_template, url_for
 
 from data import db_session
 from data.user import User
-from main import generate_confirmation_token, send_email
+from services.email_service import generate_confirmation_token, send_email
 
 
 def register_error_message(birth_date, captcha, nick, email):
