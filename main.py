@@ -22,6 +22,7 @@ from dotenv import load_dotenv
 import os
 
 from seeder import seed
+from services.auth_service import *
 from services.forum_service import *
 
 
@@ -197,39 +198,17 @@ def donate():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    message = ''
     if form.validate_on_submit():
-        db = db_session.create_session()
-        if form.birth_date.data:
-            if form.birth_date.data > date.today():
-                message = "Вы не могли родится в будущем!"
-        elif form.captcha.data != session['captcha']:
-            message = "Капча введена неверно"
-        elif [ch for ch in form.nickname.data if ch not in string.ascii_letters + '1234567890_-/']:
-            message = "В нике можно использовать только cимволы a-z, A-Z, 0-9, _-/"
-        elif db.query(User).filter(User.email == form.email.data).first():
-            message = "На эту почту уже зарегистрирован пользователь"
-        elif db.query(User).filter(User.nickname == form.nickname.data).first():
-            message = "Пользователь с таким ником уже есть"
-
+        message = register_error_message(form.birth_date.data, form.captcha.data, form.nickname.data, form.email.data)
         if message:
             captcha_text, encode_captcha = create_captcha()
             session['captcha'] = captcha_text
             return render_template('register.html', title='Регистрация', form=form, message=message,
                                    сptch=str(encode_captcha)[2:-1])
-        else:
-            user = User(nickname=form.nickname.data, about=form.about.data, birth_date=form.birth_date.data,
-                        email=form.email.data)
-            user.set_password(form.password.data)
-            token = generate_confirmation_token(user.email)
-            confirm_url = url_for('confirm_email', token=token, _external=True)
-            html = render_template('confirm_account.html', confirm=confirm_url, nick=user.nickname)
-            subject = "Подтверждение почты на pih-poh.online"
-            send_email(user.email, subject, html)
-            db.add(user)
-            db.commit()
-            flash('На Вашу почту отправлено письмо для подтверждения.', 'success')
-            return redirect('/')
+
+        add_user(form.birth_date.data, form.nickname.data, form.about.data, form.email.data, form.password.data)
+        flash('На Вашу почту отправлено письмо для подтверждения.', 'success')
+        return redirect('/')
 
     captcha_text, encode_captcha = create_captcha()
     session['captcha'] = captcha_text
@@ -240,6 +219,7 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        login_user(form.email.data)
         db = db_session.create_session()
         user = db.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
@@ -333,7 +313,10 @@ def user(user_id):
     else:
         title = user.nickname
     if user.birth_date:
-        user_age = str((datetime.now() - user.birth_date) // 365).split()[0]
+        if datetime.now() - user.birth_date > timedelta(365):
+            user_age = str((datetime.now() - user.birth_date) // 365).split()[0]
+        else:
+            user_age = 0
     else:
         user_age = None
     user_thread = db.query(Thread).filter(Thread.author_id == user_id).all()
