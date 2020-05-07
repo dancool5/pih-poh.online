@@ -32,10 +32,8 @@ def add_user(birth_date, nick, about, email, password):
     user = User(nickname=nick, about=about, birth_date=birth_date,
                 email=email)
     user.set_password(password)
-    token = generate_confirmation_token(user.email)
-    confirm_url = url_for('confirm_email', token=token, _external=True)
+    confirm_url = url_for('confirm_email', token=generate_confirmation_token(user.email), _external=True)
     html = render_template('confirm_account.html', confirm=confirm_url, nick=user.nickname)
-    subject = "Подтверждение почты на pih-poh.online"
-    send_email(user.email, subject, html)
+    send_email(user.email, "Подтверждение почты на pih-poh.online", html)
     db.add(user)
     db.commit()

@@ -2,7 +2,7 @@ import io
 
 from flask_mail import Mail
 
-from flask import Flask, redirect, flash, request, send_file, abort
+from flask import Flask, redirect, flash, request, send_file, abort, render_template
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 
 from data.user import User
@@ -21,6 +21,7 @@ from seeder import seed
 from services.auth_service import *
 from services.email_service import *
 from services.forum_service import *
+from services.user_service import *
 
 
 def create_captcha():
@@ -33,6 +34,17 @@ def create_captcha():
 def is_page_exist(obj):
     if not obj:
         return abort(404)
+
+
+def count_age(birth_date):
+    if birth_date:
+        # если с момента рождения юзера прошло более 1 года, т.е. пользователю уже есть 1 год
+        if datetime.now() - user.birth_date > timedelta(365):
+            # считаем, сколько дней прошло с момента рождения до настоящего времени
+            # и делим на 365 (кол-во дней в году) и берем только количество лет
+            return str((datetime.now() - user.birth_date) // 365).split()[0]
+        return 0
+    return None
 
 
 load_dotenv()
@@ -227,11 +239,9 @@ def mail_recover_password(user_id):
     user = db.query(User).filter(User.id == user_id).first()
     if current_user.id != user.id:
         return abort(404)
-    token = generate_confirmation_token(user.email)
-    confirm_url = url_for('change_pass', token=token, _external=True)
+    confirm_url = url_for('change_pass', token=generate_confirmation_token(user.email), _external=True)
     html = render_template('mail_recover_pass.html', confirm=confirm_url, nick=user.nickname)
-    subject = "Смена пароля на pih-poh.online"
-    send_email(user.email, subject, html)
+    send_email(user.email, "Смена пароля на pih-poh.online", html)
     flash('На Вашу почту отправлено письмо для смены пароля.', 'success')
     return redirect('/')
 
@@ -286,21 +296,18 @@ def user(user_id):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
     is_page_exist(user)
+
+    user_age = count_age(user.birth_date)
+    user_thread = db.query(Thread).filter(Thread.author_id == user_id).all()
+
+    if user_thread:
+        user_thread = user_thread[-1]
+        update_threads([user_thread])
+
     if current_user.id == user.id:
         title = 'Моя страница'
     else:
         title = user.nickname
-    if user.birth_date:
-        if datetime.now() - user.birth_date > timedelta(365):
-            user_age = str((datetime.now() - user.birth_date) // 365).split()[0]
-        else:
-            user_age = 0
-    else:
-        user_age = None
-    user_thread = db.query(Thread).filter(Thread.author_id == user_id).all()
-    if user_thread:
-        user_thread = user_thread[-1]
-        update_threads([user_thread])
     return render_template('user.html', title=title, user=user, user_age=user_age, thread=user_thread)
 
 
@@ -310,29 +317,16 @@ def edit_page(user_id):
     user = db.query(User).filter(User.id == user_id).first()
     if current_user.id != user.id:
         return abort(404)
+
     form = EditForm(data={'about': user.about, 'birth_date': user.birth_date})
     if form.validate_on_submit():
-        if form.birth_date.data:
-            if form.birth_date.data > date.today():
-                return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form,
-                                       message='Вы не могли родиться в будущем!')
-        user.about = form.about.data
-        user.birth_date = form.birth_date.data
-        if form.avatar.data:
-            avatar = request.files[form.avatar.name].read()
-            print(avatar)
-            if len(avatar) > 1024 * 1024:
-                return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form,
-                                       message='Размер аватара не должен превышать 1Mb')
-            if not [True for extension in ["JFIF", "PNG", "GIF", "WEBP"] if extension in str(avatar)]:
-                return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form,
-                                       message='Допустимые расширения аватара: JEPG, PNG, GIF, WEBP')
-            user.avatar = avatar
-            cash_number = user.cash_number + 1 if user.cash_number < 100 else 0
-            user.cash_number = cash_number
-        db.commit()
-        return redirect(url_for('user', user_id=user.id))
-    return render_template('edit_page.html', title='Редактировать страницу', user=user, form=form)
+            message = edit_page_error_message(form.birth_date.data, form.avatar.data, form.avatar.name)
+            if message:
+                return render_template('edit_page.html', title='Редактировать страницу', message=message, user=user,
+                                       form=form)
+            edit_user_page(user_id, form.birth_date.data, form.about.data, form.avatar.name)
+            return redirect(url_for('user', user_id=user.id))
+    return render_template("edit_page.html", title='Редактировать страницу', user=user, form=form)
 
 
 @app.route('/user/<user_id>/threads')
