@@ -4,6 +4,7 @@ from flask_mail import Mail
 
 from flask import Flask, redirect, flash, request, send_file, abort, render_template
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
+from datetime import datetime, timedelta
 
 from data.user import User
 from data.section import Section
@@ -39,10 +40,10 @@ def is_page_exist(obj):
 def count_age(birth_date):
     if birth_date:
         # если с момента рождения юзера прошло более 1 года, т.е. пользователю уже есть 1 год
-        if datetime.now() - user.birth_date > timedelta(365):
+        if datetime.now() - birth_date > timedelta(365):
             # считаем, сколько дней прошло с момента рождения до настоящего времени
             # и делим на 365 (кол-во дней в году) и берем только количество лет
-            return str((datetime.now() - user.birth_date) // 365).split()[0]
+            return str((datetime.now() - birth_date) // 365).split()[0]
         return 0
     return None
 
@@ -320,12 +321,13 @@ def edit_page(user_id):
 
     form = EditForm(data={'about': user.about, 'birth_date': user.birth_date})
     if form.validate_on_submit():
-            message = edit_page_error_message(form.birth_date.data, form.avatar.data, form.avatar.name)
-            if message:
-                return render_template('edit_page.html', title='Редактировать страницу', message=message, user=user,
-                                       form=form)
-            edit_user_page(user_id, form.birth_date.data, form.about.data, form.avatar.name)
-            return redirect(url_for('user', user_id=user.id))
+        avatar = request.files[form.avatar.name].read() if form.avatar.data else None
+        message = edit_page_error_message(form.birth_date.data, avatar)
+        if message:
+            return render_template('edit_page.html', title='Редактировать страницу', message=message, user=user,
+                                   form=form)
+        edit_user_page(user_id, form.birth_date.data, form.about.data, avatar)
+        return redirect(url_for('user', user_id=user.id))
     return render_template("edit_page.html", title='Редактировать страницу', user=user, form=form)
 
 
