@@ -1,7 +1,5 @@
 from datetime import date
 
-from flask import request
-
 from data import db_session
 from data.user import User
 

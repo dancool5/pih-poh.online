@@ -210,7 +210,6 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        login_user(form.email.data)
         db = db_session.create_session()
         user = db.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
