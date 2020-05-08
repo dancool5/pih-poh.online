@@ -84,6 +84,7 @@ def update_threads(threads):
             thread.last_message_date = None
         thread.is_active = bool(is_active_threads([thread]))
     db.commit()
+    db.close()
 
 
 def update_forum():
