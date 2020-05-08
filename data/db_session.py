@@ -21,7 +21,7 @@ def global_init(db_file):
     conn_str = os.environ.get('DATABASE_URL', conn_str_sqlite)
     print(f'Подключение к базе данных по адресу {conn_str}')
 
-    engine = sqlalchemy.create_engine(conn_str, echo=False)
+    engine = sqlalchemy.create_engine(conn_str, echo=False, pool_size=10,  max_overflow=20)
     __factory = orm.sessionmaker(bind=engine)
 
     from . import __all_models
