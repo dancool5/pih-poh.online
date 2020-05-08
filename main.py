@@ -72,7 +72,9 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     db = db_session.create_session()
-    return db.query(User).get(user_id)
+    user = db.query(User).get(user_id)
+    db.close()
+    return user
 
 
 @app.errorhandler(404)
@@ -96,6 +98,7 @@ def forum():
     db = db_session.create_session()
     sections = db.query(Section).all()
     update_forum()
+    db.close()
     return render_template('forum.html', title='Форум', sections=sections)
 
 
@@ -106,6 +109,7 @@ def sect(section_id):
     threads = db.query(Thread).filter(Thread.section_id == section.id).all()
     update_threads(threads)
     threads.reverse()
+    db.close()
     return render_template('section.html', title=section.name, threads=threads, section=section)
 
 
@@ -128,10 +132,12 @@ def thread(section_id, thread_id):
 
     if form.validate_on_submit():
         if not current_user.is_authenticated:
+            db.close()
             return abort(404)
         add_mess(form.content.data, thread.id, form.answers.data)
+        db.close()
         return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
-
+    db.close()
     return render_template('thread.html', thread=thread, messages=messages, form=form, section_id=section_id,
                            title=thread.name)
 
@@ -143,9 +149,11 @@ def delete_thread(thread_id):
     section_id = thread.section_id
 
     if not current_user.id == thread.author_id:
+        db.close()
         return abort(404)
 
     del_thr(thread_id)
+    db.close()
     return redirect(url_for('sect', section_id=section_id))
 
 
@@ -155,9 +163,11 @@ def delete_message(thread_id, message_id, section_id):
     message = db.query(Message).filter(Message.id == message_id).first()
 
     if not current_user.id == message.author_id:
+        db.close()
         return abort(404)
 
     del_mes(message_id, thread_id)
+    db.close()
     return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
 
 
@@ -167,12 +177,15 @@ def edit_message(thread_id, message_id, section_id):
     message = db.query(Message).filter(Message.id == message_id).first()
 
     if not current_user.id == message.author_id:
+        db.close()
         return abort(404)
 
     form = MessageForm(data={'answers': message.answers, 'content': message.content})
     if form.validate_on_submit():
         edit_mess(message_id, form.answers.data, form.content.data)
+        db.close()
         return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
+    db.close()
     return render_template('edit_message.html', title='Редактирование сообщения', form=form, mess=message,
                            thread_id=thread_id, section_id=section_id)
 
@@ -216,8 +229,11 @@ def login():
         if user and user.check_password(form.password.data):
             if user.is_confirmed:
                 login_user(user, remember=form.remember_me.data)
+                db.close()
                 return redirect("/")
+            db.close()
             return render_template('login.html', message="Почта аккаунта не подтверждена", form=form)
+        db.close()
         return render_template('login.html', message="Неправильная почта или пароль", form=form)
     return render_template('login.html', title='Авторизация', form=form)
 
@@ -229,7 +245,9 @@ def recover_password():
         db = db_session.create_session()
         user = db.query(User).filter(form.email.data == User.email).first()
         if not user:
+            db.close()
             return render_template('recover_password.html', message="У нас нет аккаунта с такой почтой", form=form)
+        db.close()
         return redirect(url_for('mail_recover_password', user_id=user.id, is_edit=False))
     return render_template('recover_password.html', form=form)
 
@@ -239,15 +257,16 @@ def recover_password():
 def mail_recover_password(user_id, is_edit):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
-    db.close()
     is_page_exist(user_id)
     if is_edit == 'True':
         if current_user.id != user.id:
+            db.close()
             return abort(404)
     confirm_url = url_for('change_pass', token=generate_confirmation_token(user.email), _external=True)
     html = render_template('mail_recover_pass.html', confirm=confirm_url, nick=user.nickname)
     send_email(user.email, "Смена пароля на pih-poh.online", html)
     flash('На Вашу почту отправлено письмо для смены пароля.', 'success')
+    db.close()
     return redirect('/')
 
 
@@ -275,6 +294,7 @@ def confirm_email(token):
         db.commit()
         db.close()
         flash('Аккаунт успешно подтвержден!', 'success')
+    db.close()
     return redirect('/')
 
 
