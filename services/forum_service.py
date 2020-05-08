@@ -15,6 +15,7 @@ def create_thr(name, desc, sect_id):
                     section_id=sect_id, created_date=datetime.now())
     db.add(thread)
     db.commit()
+    db.close()
 
 
 def add_mess(cont, thr_id, ans):
@@ -30,6 +31,7 @@ def add_mess(cont, thr_id, ans):
     thread.last_message_date = message.created_date
     thread.is_active = True
     db.commit()
+    db.close()
 
 
 def del_thr(thr_id):
@@ -40,6 +42,7 @@ def del_thr(thr_id):
         db.delete(message)
     db.delete(thread)
     db.commit()
+    db.close()
 
 
 def del_mes(mess_id, thr_id):
@@ -58,6 +61,7 @@ def edit_mess(mess_id, ans, cont):
     mess.content = cont
     mess.redact_date = datetime.now()
     db.commit()
+    db.close()
 
 
 def is_active_threads(threads):
@@ -80,6 +84,7 @@ def update_threads(threads):
             thread.last_message_date = None
         thread.is_active = bool(is_active_threads([thread]))
     db.commit()
+    db.close()
 
 
 def update_forum():
@@ -94,3 +99,4 @@ def update_forum():
             sect.last_thread_date = None
         sect.active_threads = is_active_threads(threads)
     db.commit()
+    db.close()

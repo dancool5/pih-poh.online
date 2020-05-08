@@ -26,3 +26,4 @@ def edit_user_page(user_id, birth_date, about, avatar):
     cash_number = user.cash_number + 1 if user.cash_number < 100 else 0
     user.cash_number = cash_number
     db.commit()
+    db.close()

@@ -239,6 +239,7 @@ def recover_password():
 def mail_recover_password(user_id, is_edit):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
+    db.close()
     is_page_exist(user_id)
     if is_edit == 'True':
         if current_user.id != user.id:
@@ -272,6 +273,7 @@ def confirm_email(token):
         user.is_confirmed = True
         db.add(user)
         db.commit()
+        db.close()
         flash('Аккаунт успешно подтвержден!', 'success')
     return redirect('/')
 
@@ -289,6 +291,7 @@ def change_pass(token):
     if form.validate_on_submit():
         user.set_password(form.new_password.data)
         db.commit()
+        db.close()
         flash('Пароль успешно сменен!', 'success')
         return redirect('/')
     return render_template('change_password.html', form=form)
@@ -312,6 +315,7 @@ def user(user_id):
         title = 'Моя страница'
     else:
         title = user.nickname
+    db.close()
     return render_template('user.html', title=title, user=user, user_age=user_age, thread=user_thread)
 
 
@@ -320,6 +324,7 @@ def edit_page(user_id):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
     if current_user.id != user.id:
+        db.close()
         return abort(404)
 
     form = EditForm(data={'about': user.about, 'birth_date': user.birth_date})
@@ -327,9 +332,11 @@ def edit_page(user_id):
         avatar = request.files[form.avatar.name].read() if form.avatar.data else None
         message = edit_page_error_message(form.birth_date.data, avatar)
         if message:
+            db.close()
             return render_template('edit_page.html', title='Редактировать страницу', message=message, user=user,
                                    form=form)
         edit_user_page(user_id, form.birth_date.data, form.about.data, avatar)
+        db.close()
         return redirect(url_for('user', user_id=user.id))
     return render_template("edit_page.html", title='Редактировать страницу', user=user, form=form)
 
@@ -346,6 +353,7 @@ def all_user_threads(user_id):
         title = 'Мои треды'
     else:
         title = 'Треды ' + user.nickname
+    db.close()
     return render_template('all_threads.html', title=title, user=user, threads=user_threads)
 
 
@@ -354,13 +362,16 @@ def user_avatar(user_id, cash_number):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
     if user.avatar:
+        db.close()
         return send_file(io.BytesIO(user.avatar), mimetype='image/*')
+    db.close()
     return send_file(io.BytesIO(open('static/images/avatar.png', 'rb').read()), mimetype='image/*')
 
 
 db_session.global_init(path.join(path.dirname(__file__), './db/pihpoh_db.db'))
 
 db = db_session.create_session()
+db.close()
 
 if len(db.query(Section).all()) == 0:
     seed()

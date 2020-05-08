@@ -23,7 +23,7 @@ def register_error_message(birth_date, captcha, nick, email):
         message = "На эту почту уже зарегистрирован пользователь"
     elif db.query(User).filter(User.nickname == nick).first():
         message = "Пользователь с таким ником уже есть"
-
+    db.close()
     return message
 
 
@@ -37,3 +37,4 @@ def add_user(birth_date, nick, about, email, password):
     send_email(user.email, "Подтверждение почты на pih-poh.online", html)
     db.add(user)
     db.commit()
+    db.close()
