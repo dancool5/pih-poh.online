@@ -365,4 +365,4 @@ if len(db.query(Section).all()) == 0:
     seed()
 
 if __name__ == '__main__':
-    app.run(port=os.environ.get('PORT'), host='127.0.0.1')
+    app.run(port=os.environ.get('PORT'), host='0.0.0.0')
