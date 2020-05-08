@@ -183,7 +183,6 @@ def edit_message(thread_id, message_id, section_id):
         edit_mess(message_id, form.answers.data, form.content.data)
         db.close()
         return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
-    db.close()
     return render_template('edit_message.html', title='Редактирование сообщения', form=form, mess=message,
                            thread_id=thread_id, section_id=section_id)
 
