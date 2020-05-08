@@ -137,7 +137,6 @@ def thread(section_id, thread_id):
         add_mess(form.content.data, thread.id, form.answers.data)
         db.close()
         return redirect(url_for('thread', thread_id=thread_id, section_id=section_id))
-    db.close()
     return render_template('thread.html', thread=thread, messages=messages, form=form, section_id=section_id,
                            title=thread.name)
 
