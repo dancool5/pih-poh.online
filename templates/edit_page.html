@@ -38,7 +38,7 @@
 		<div class="message">{{ message }}</div>
 	</div>
 	<div class="othr_edit">
-		<a href="{{ url_for('mail_recover_password', user_id=user.id, number=2) }}">Сменить пароль</a>
+		<a href="{{ url_for('mail_recover_password', user_id=user.id, number=2, is_edit=True) }}">Сменить пароль</a>
 		<h4 style="color: #ED4C4C;">Ник и почту никак изменить нельзя!</h4>
 	</div>
 	</form>

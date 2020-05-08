@@ -229,16 +229,19 @@ def recover_password():
         user = db.query(User).filter(form.email.data == User.email).first()
         if not user:
             return render_template('recover_password.html', message="У нас нет аккаунта с такой почтой", form=form)
-        return redirect(url_for('mail_recover_password', user_id=user.id))
+        return redirect(url_for('mail_recover_password', user_id=user.id, is_edit=False))
     return render_template('recover_password.html', form=form)
 
 
-@app.route('/send_mail_to_chng_pass/<user_id>')
-def mail_recover_password(user_id):
+@app.route('/send_mail_to_chng_pass/<user_id>/<is_edit>')
+# isedit - переменная для того, чтобы понять, это изменение пароля в edit_page или восстановление пароля
+def mail_recover_password(user_id, is_edit):
     db = db_session.create_session()
     user = db.query(User).filter(User.id == user_id).first()
-    if current_user.id != user.id:
-        return abort(404)
+    is_page_exist(user_id)
+    if is_edit == 'True':
+        if current_user.id != user.id:
+            return abort(404)
     confirm_url = url_for('change_pass', token=generate_confirmation_token(user.email), _external=True)
     html = render_template('mail_recover_pass.html', confirm=confirm_url, nick=user.nickname)
     send_email(user.email, "Смена пароля на pih-poh.online", html)
