@@ -96,7 +96,7 @@ def news_line():
 @app.route('/forum')
 def forum():
     db = db_session.create_session()
-    sections = db.query(Section).all()
+    sections = db.query(Section).order_by(Section.id).all()
     update_forum()
     db.close()
     return render_template('forum.html', title='Форум', sections=sections)
@@ -144,6 +144,7 @@ def thread(section_id, thread_id):
 def delete_thread(thread_id):
     db = db_session.create_session()
     thread = db.query(Thread).filter(Thread.id == thread_id).first()
+    is_page_exist(thread)
     section_id = thread.section_id
 
     if not current_user.id == thread.author_id:
