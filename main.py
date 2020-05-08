@@ -358,7 +358,7 @@ def user_avatar(user_id, cash_number):
     return send_file(io.BytesIO(open('static/images/avatar.png', 'rb').read()), mimetype='image/*')
 
 
-db_session.global_init(path.join(path.dirname(__file__), './db/mars_explorer.db'))
+db_session.global_init(path.join(path.dirname(__file__), './db/pihpoh_db.db'))
 
 db = db_session.create_session()
 
