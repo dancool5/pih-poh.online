@@ -107,7 +107,6 @@ def sect(section_id):
     db = db_session.create_session()
     section = db.query(Section).filter(Section.id == section_id).first()
     threads = db.query(Thread).filter(Thread.section_id == section.id).all()
-    db.close()
     update_threads(threads)
     threads.reverse()
     return render_template('section.html', title=section.name, threads=threads, section=section)
