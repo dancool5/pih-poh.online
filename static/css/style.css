@@ -556,7 +556,7 @@ footer a{
 	display: none;
 }
 
-.trix-toolbar .trix-button.trix-active, .trix-button--icon-bullet-list{
+.trix-button--icon-number-list, .trix-button--icon-bullet-list {
 	display: none;
 }
 
