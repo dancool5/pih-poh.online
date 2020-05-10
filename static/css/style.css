@@ -556,7 +556,11 @@ footer a{
 	display: none;
 }
 
-.trix-button--icon-number-list, .trix-button--icon-bullet-list {
+.trix-button--icon-number-list {
+	display: none;
+}
+
+.trix-button--icon-bullet-list {
 	display: none;
 }
 
