@@ -95,20 +95,26 @@ def news_line():
 
 @app.route('/forum')
 def forum():
+    update_forum()
     db = db_session.create_session()
     sections = db.query(Section).order_by(Section.id).all()
-    update_forum()
     db.close()
     return render_template('forum.html', title='Форум', sections=sections)
 
 
 @app.route('/forum/section/<section_id>')
 def sect(section_id):
+    print(1)
     db = db_session.create_session()
+    print(2)
     section = db.query(Section).filter(Section.id == section_id).first()
+    print(3)
     threads = db.query(Thread).filter(Thread.section_id == section.id).all()
-    update_threads(threads)
+    print(4)
     threads.reverse()
+    print(5)
+    update_threads(threads)
+    print(6)
     return render_template('section.html', title=section.name, threads=threads, section=section)
 
 
@@ -147,7 +153,7 @@ def delete_thread(thread_id):
     is_page_exist(thread)
     section_id = thread.section_id
 
-    if not current_user.id == thread.author_id:
+    if (not current_user.id == thread.author_id) and (not current_user.status == 'АДМИН'):
         db.close()
         return abort(404)
 
@@ -161,7 +167,7 @@ def delete_message(thread_id, message_id, section_id):
     db = db_session.create_session()
     message = db.query(Message).filter(Message.id == message_id).first()
 
-    if not current_user.id == message.author_id:
+    if (not current_user.id == message.author_id) and (not current_user.status == 'АДМИН'):
         db.close()
         return abort(404)
 
@@ -337,6 +343,24 @@ def user(user_id):
     return render_template('user.html', title=title, user=user, user_age=user_age, thread=user_thread)
 
 
+@app.route('/user/<user_id>/give_admin')
+def give_admin(user_id):
+    if not current_user.status == 'АДМИН':
+        return abort(404)
+    db = db_session.create_session()
+    user = db.query(User).filter(User.id == user_id).first()
+    is_page_exist(user)
+
+    if user.status == 'АДМИН':
+        flash('Этот пользователь уже является админом.', 'error')
+        return redirect(url_for('user', user_id=user_id))
+    user.status = 'АДМИН'
+    flash('Теперь этот пользователь стал админом.', 'success')
+    db.commit()
+    db.close()
+    return redirect(url_for('user', user_id=user_id))
+
+
 @app.route('/user/<user_id>/edit', methods=['GET', 'POST'])
 def edit_page(user_id):
     db = db_session.create_session()
@@ -386,7 +410,7 @@ def user_avatar(user_id, cash_number):
     return send_file(io.BytesIO(open('static/images/avatar.png', 'rb').read()), mimetype='image/*')
 
 
-db_session.global_init(path.join(path.dirname(__file__), './db/pihpoh_db.db'))
+db_session.global_init('db/pihpoh_db.sqlite')
 
 db = db_session.create_session()
 db.close()
@@ -395,4 +419,4 @@ if len(db.query(Section).all()) == 0:
     seed()
 
 if __name__ == '__main__':
-    app.run(port=os.environ.get('PORT'), host='0.0.0.0')
+    app.run(port=os.environ.get('PORT'), host='127.0.0.1')

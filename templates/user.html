@@ -4,6 +4,9 @@
 	<div class="info_user">
 		<div class="avatar" style="background-image: url('{{ url_for('user_avatar', user_id=user.id, cash_number=user.cash_number) }}')"></div>
 		<p class="nick">{{ user.nickname }}</p>
+		{% if user.status %}
+			<p class="nick status">{{ user.status }}</p>
+		{% endif %}
 		<br>
 		{% if user.birth_date %}
 			<pre class="name">Возраст: </pre>{{ user_age }}
@@ -16,7 +19,10 @@
 			</div>
 		{% endif %}
 	{% if current_user.id == user.id %}
-		<pre><a class="change_page" href="{{ url_for('edit_page', user_id=user.id) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Редактировать страницу</a></pre>
+		<pre><a class="change_page" href="{{ url_for('edit_page', user_id=user.id) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Редактировать страницу</a></pre>	
+	{% endif %}
+	{% if current_user.id != user.id and current_user.status == "АДМИН" %}
+		<pre><a class="give_admin" href="{{ url_for('give_admin', user_id=user.id) }}"><i class="fa fa-diamond" aria-hidden="true"></i> Назначить админом</a></pre>
 	{% endif %}
 	</div>
 	<div class="rght_sec_user">

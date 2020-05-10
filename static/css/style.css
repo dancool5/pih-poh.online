@@ -460,7 +460,7 @@ footer a{
 }
 
 .mes .btn {
-	width: 10%;
+	width: 13%;
 	text-align: center;
 	padding: 1%;
 	border-radius: 10px;
@@ -852,9 +852,50 @@ i:hover{
 	margin-left: 4%;
 }
 
+.b_4 {
+	border: 2px solid;
+	border-radius: 0px 0px 0px 15px;
+	width: auto;
+	margin-bottom: 2%;
+	margin-top: -0.4%;
+	margin-left: 4%;
+	padding-top: 0.65%;
+	padding-bottom: 0.75%;
+	height: 100%;
+}
+
+.b_5 {
+	border: 2px solid;
+	border-radius: 0px 0px 15px 0px;
+	border-left-width: 1px;
+	content: attr(title);
+	margin-left: -0.5%;
+	padding-bottom: 1%;
+	padding-top: 1%;
+	height: 100%;
+}
+
 .nick {
 	width: 100%;
 	text-align: center;
 	font-size: 2vw;
 	font-weight: bold;
+}
+
+.status {
+	color: #67C7F1;
+}
+
+.status_thr {
+	margin: auto;
+}
+
+.give_admin {
+	margin-left: 1%;
+	margin-top: -5%;
+    padding: 5%;
+    border: 2px solid;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+	margin-bottom: 3%;
 }

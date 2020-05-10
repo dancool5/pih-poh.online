@@ -29,9 +29,12 @@
 		<div class="rght_thr">
 			<div class="avatar av_sect" style="background-image: url({{ url_for('user_avatar', user_id=thread.author.id, cash_number=thread.author.cash_number) }})"></div>
 			<p><a href="{{ url_for('user', user_id=thread.author_id) }}">{{ thread.author.nickname }}</a></p>
+			{% if thread.author.status %}
+				<p class="status status_thr">{{ thread.author.status }}</p>
+			{% endif %}
 		</div>
 	</div>
-	{% if current_user.id == thread.author.id %}
+	{% if current_user.status == "АДМИН" or current_user.id == thread.author.id %}
 		<pre><a class="del_tred" href="{{ url_for('delete_thread', thread_id=thread.id) }}"><i class="fa fa-trash-o" aria-hidden="true"></i>  Удалить тред</a></pre>
 	{% endif %}
 	<form action="" method="post" class="mes">
@@ -74,12 +77,20 @@
 				<div class="rght_mes">
 					<div class="avatar av_thr" style="background-image: url({{ url_for('user_avatar', user_id=message.author.id, cash_number=message.author.cash_number) }})"></div>
 					<p><a href="{{ url_for('user', user_id=message.author_id) }}">{{ message.author.nickname }}</a></p>
+					{% if message.author.status %}
+						<p class="status status_thr">{{ message.author.status }}</p>
+					{% endif %}
 				</div>
 			</div>
 			{% if message.author_id == current_user.id %}
 				<div class="for_mes">
 					<a class="btn_mes b_1" href="{{ url_for('edit_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}" title="Редактировать"><i class="fa fa-pencil" aria-hidden="true"></i></a>
 					<a class="btn_mes b_2" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+				</div>
+			{% elif current_user.status == "АДМИН" %}
+				<div style="margin-top: -0.4%">
+				<a class="btn_mes b_3 b_4" onclick="answ('{{ message.author.nickname }}')">Ответить</a>
+				<a class="btn_mes b_2 b_5" href="{{ url_for('delete_message', thread_id=message.thread_id, section_id=section_id, message_id=message.id) }}" title="Удалить"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 				</div>
 			{% else %}
 				<a class="btn_mes b_3" onclick="answ('{{ message.author.nickname }}')">Ответить</a>
