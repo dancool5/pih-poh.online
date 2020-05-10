@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if current_user.status == "АДМИН" %}
+<pre><a class="but_create_art" href="{{ url_for('create_article') }}"><i class="fa fa-plus" aria-hidden="true"></i> Написать новость</a></pre>
+    {% endif %}
+    {% if articles %}
+        {% for article in articles %}
+            <p>Новость</p>
+        {% endfor %}
+    {% else %}
+        <h2>Новостей пока нет</h2>
+    {% endif %}
+{% endblock %}

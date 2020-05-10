@@ -11,6 +11,7 @@ from data.user import User
 from data.section import Section
 from data.thread import Thread
 from data.message import Message
+from data.article import Article
 from forms import *
 from data import db_session
 from captcha.image import ImageCaptcha
@@ -24,6 +25,7 @@ from services.auth_service import *
 from services.email_service import *
 from services.forum_service import *
 from services.user_service import *
+from services.article_service import *
 
 
 def create_captcha():
@@ -88,9 +90,24 @@ def page_not_found(e):
 
 
 @app.route('/')
-@app.route('/news_line')
-def news_line():
-    return render_template('base.html', title='Лента')
+@app.route('/article_line')
+def article_line():
+    db = db_session.create_session()
+    articles = db.query(Article).all()
+    db.close()
+    return render_template('articles.html', title='Лента', articles=articles)
+
+
+@app.route('/create_article', methods=['GET', 'POST'])
+def create_article():
+    if not current_user.status == "АДМИН":
+        return abort(404)
+
+    form = ArticleForm()
+    if form.validate_on_submit():
+        create_art(form.name.data, form.description.data)
+        return redirect(url_for('article_line'))
+    return render_template('create_article.html', title='Написать новость', form=form)
 
 
 @app.route('/forum')
@@ -104,17 +121,11 @@ def forum():
 
 @app.route('/forum/section/<section_id>')
 def sect(section_id):
-    print(1)
     db = db_session.create_session()
-    print(2)
     section = db.query(Section).filter(Section.id == section_id).first()
-    print(3)
     threads = db.query(Thread).filter(Thread.section_id == section.id).all()
-    print(4)
     threads.reverse()
-    print(5)
     update_threads(threads)
-    print(6)
     return render_template('section.html', title=section.name, threads=threads, section=section)
 
 
@@ -413,7 +424,7 @@ def user_avatar(user_id, cash_number):
     return send_file(io.BytesIO(open('static/images/avatar.png', 'rb').read()), mimetype='image/*')
 
 
-db_session.global_init(path.join(path.dirname(__file__), './db/pihpoh_db.db'))
+db_session.global_init('db/pihpoh_db.sqlite')
 
 db = db_session.create_session()
 db.close()
@@ -422,4 +433,4 @@ if len(db.query(Section).all()) == 0:
     seed()
 
 if __name__ == '__main__':
-    app.run(port=os.environ.get('PORT'), host='0.0.0.0')
+    app.run(port=os.environ.get('PORT'), host='127.0.0.1')

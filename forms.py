@@ -33,7 +33,7 @@ class ThreadForm(FlaskForm):
                                            Length(max=100, message='Тема должна содержать неболее 100 символов')])
     description = TextAreaField('Описание',
                                 validators=[DataRequired(),
-                                            Length(max=300, message='Тема должна содержать неболее 300 символов')])
+                                            Length(max=300, message='Описание должно содержать неболее 300 символов')])
     submit = SubmitField('Создать')
 
 
@@ -74,3 +74,12 @@ class EmailChangeForm(FlaskForm):
     email = StringField('Введите новую почту',
                         validators=[DataRequired(), Email(message='Неккоректный адрес почты')])
     submit = SubmitField('Отправить')
+
+
+class ArticleForm(FlaskForm):
+    name = StringField('Заголовок', validators=[DataRequired(),
+                                           Length(max=100, message='Заголовок должен содержать неболее 100 символов')])
+    description = TextAreaField('Статья',
+                                validators=[DataRequired(),
+                                            Length(max=300, message='Статья должна содержать неболее 3000 символов')])
+    submit = SubmitField('Создать')

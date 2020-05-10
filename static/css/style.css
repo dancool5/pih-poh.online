@@ -907,3 +907,33 @@ i:hover{
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 	margin-bottom: 3%;
 }
+
+.but_create_art {
+	border: 2px solid;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    padding: 1%;
+    margin-left: auto;
+    margin-right: 0;
+    width: fit-content;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    display: flex;
+    justify-content: center;
+	align-items: center;
+}
+
+.create_article {
+	margin: auto;
+	margin-top: 3%;
+	min-width: 70%;
+	max-width: 70%;
+	margin-bottom: 3%;
+}
+
+.btn_cr_art {
+	padding: 1%;
+    width: 20%;
+    align-self: flex-start;
+}
+}
