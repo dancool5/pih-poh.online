@@ -38,7 +38,7 @@
 			    {% if mess.answers %}
                     <a class='clearr' id='cl' onclick='clearr()'>Удалить |</a>
                 {% endif %}
-				{{ form.answers(class="answers", id="answer", readonly) }}
+				{{ form.answers(class="answers", id="answer", readonly="true") }}
 			</div>
 			{{ form.content(class="form-control mes_content", id="x", style="display: none") }}<br>
 			<trix-editor input="x" class="editor" rows="10" id="comment"></trix-editor><br>
