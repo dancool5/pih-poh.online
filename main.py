@@ -150,10 +150,13 @@ def thread(section_id, thread_id):
 def delete_thread(thread_id):
     db = db_session.create_session()
     thread = db.query(Thread).filter(Thread.id == thread_id).first()
+    print(1)
     is_page_exist(thread)
+    print(2)
     section_id = thread.section_id
 
     if (not current_user.id == thread.author_id) and (not current_user.status == 'АДМИН'):
+        print(3)
         db.close()
         return abort(404)
 
