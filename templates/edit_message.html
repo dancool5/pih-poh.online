@@ -21,7 +21,7 @@
                 {% if mess.answers %}
                     <pre><a href="{{ url_for('user', user_id=mess.answers_user_id) }}">{{ mess.answers }}</a></pre>
                 {% endif %}
-                {{ mess.content | safe}}
+                <pre>{{ mess.content | safe}}</pre>
             </div>
         </div>
         <div class="rght_mes">

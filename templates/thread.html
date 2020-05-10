@@ -71,7 +71,7 @@
 						{% if message.answers %}
 							<pre><a href="{{ url_for('user', user_id=message.answers_user_id) }}">{{ message.answers }}</a></pre>
 						{% endif %}
-						{{ message.content | safe}}
+						<pre>{{ message.content | safe}}</pre>
 					</div>
 				</div>
 				<div class="rght_mes">
