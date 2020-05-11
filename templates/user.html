@@ -72,7 +72,7 @@
 			<p style="color: #67C7F1;">{{ article.created_date.strftime("%Y-%m-%d %H:%M") }}</p>
 		</div>
 		<div class="btn_user_art">
-			<a style="margin-left:2%;" class="show_all" href="{{ url_for('all_user_articles', user_id=user.id) }}">Показать все</a>
+			<a style="width: fit-content;" class="show_all" href="{{ url_for('all_user_articles', user_id=user.id) }}">Показать все</a>
 			{% if current_user.id == user.id %}
 				<pre><a class="but_create_art" style="padding: 4%;" href="{{ url_for('create_article', is_admin=False) }}"><i class="fa fa-plus" aria-hidden="true"></i> Написать новость</a></pre>
 			{% else %}
