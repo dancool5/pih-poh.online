@@ -76,12 +76,12 @@
 			{% if current_user.id == user.id %}
 				<pre><a class="but_create_art" style="padding: 4%;" href="{{ url_for('create_article', is_admin=False) }}"><i class="fa fa-plus" aria-hidden="true"></i> Написать новость</a></pre>
 			{% else %}
-				<a class="but_create_art" style="padding: 1%;" href="{{ url_for('create_article', is_admin=False) }}">Подписаться</a>
+				<a class="but_create_art" style="padding: 1%;" href="#">Подписаться</a>
 			{% endif %}
 		</div>
 	{% else %}
 		<h4 style="margin-left:2%;">Новостей нет</h4>
-		<a class="but_create_art" style="padding: 1%;" href="{{ url_for('create_article', is_admin=False) }}">Подписаться</a>
+		<pre><a class="but_create_art" style="padding: 4%;" href="{{ url_for('create_article', is_admin=False) }}"><i class="fa fa-plus" aria-hidden="true"></i> Написать новость</a></pre>
 	{% endif %}
 	</div>
 	</div>
