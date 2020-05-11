@@ -93,20 +93,19 @@ def page_not_found(e):
 @app.route('/article_line')
 def article_line():
     db = db_session.create_session()
-    articles = db.query(Article).all()
+    articles = db.query(Article).filter(Article.is_admin).all()
     articles.reverse()
     db.close()
     return render_template('articles.html', title='Лента', articles=articles)
 
 
-@app.route('/create_article', methods=['GET', 'POST'])
-def create_article():
-    if not current_user.status == "АДМИН":
-        return abort(404)
-
+@app.route('/create_article/<is_admin>', methods=['GET', 'POST'])
+def create_article(is_admin):
     form = ArticleForm()
     if form.validate_on_submit():
-        create_art(form.name.data, form.description.data)
+        create_art(form.name.data, form.description.data, is_admin)
+        if is_admin == 'False':
+            return redirect(url_for('user', user_id=current_user.id))
         return redirect(url_for('article_line'))
     return render_template('create_article.html', title='Написать новость', form=form)
 
@@ -181,7 +180,7 @@ def thread(section_id, thread_id):
                            title=thread.name)
 
 
-@app.route('/<thread_id>/delete')
+@app.route('/thread/<thread_id>/delete')
 def delete_thread(thread_id):
     db = db_session.create_session()
     thread = db.query(Thread).filter(Thread.id == thread_id).first()
@@ -189,9 +188,7 @@ def delete_thread(thread_id):
     section_id = thread.section_id
 
     if (not current_user.id == thread.author_id) and (not current_user.status == 'АДМИН'):
-        db.close()
         return abort(404)
-
     del_thr(thread_id)
     db.close()
     return redirect(url_for('sect', section_id=section_id))
@@ -364,18 +361,16 @@ def user(user_id):
     is_page_exist(user)
 
     user_age = count_age(user.birth_date)
-    user_thread = db.query(Thread).filter(Thread.author_id == user_id).all()
-
-    if user_thread:
-        user_thread = user_thread[-1]
-        update_threads([user_thread])
+    user_article = get_user_articles(user_id)
+    user_thread = get_user_threads(user_id)
 
     if current_user.id == user.id:
         title = 'Моя страница'
     else:
         title = user.nickname
     db.close()
-    return render_template('user.html', title=title, user=user, user_age=user_age, thread=user_thread)
+    return render_template('user.html', title=title, user=user, user_age=user_age, thread=user_thread,
+                           article=user_article)
 
 
 @app.route('/user/<user_id>/give_admin')
@@ -432,6 +427,21 @@ def all_user_threads(user_id):
         title = 'Треды ' + user.nickname
     db.close()
     return render_template('all_threads.html', title=title, user=user, threads=user_threads)
+
+
+@app.route('/user/<user_id>/articles')
+def all_user_articles(user_id):
+    db = db_session.create_session()
+    user = db.query(User).filter(User.id == user_id).first()
+    is_page_exist(user)
+    user_articles = db.query(Article).filter(Article.author_id == user_id).filter(Article.is_admin == False).all()
+    user_articles.reverse()
+    if current_user.id == user.id:
+        title = 'Мои новости'
+    else:
+        title = 'Новости ' + user.nickname
+    db.close()
+    return render_template('all_articles.html', title=title, user=user, articles=user_articles)
 
 
 @app.route('/user/<user_id>/avatar/?n=<cash_number>')

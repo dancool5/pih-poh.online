@@ -11,5 +11,6 @@ class Article(SqlAlchemyBase):
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime)
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
+    is_admin = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
 
     author = orm.relation('User')

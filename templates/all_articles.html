@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+	<a href="{{ url_for('user', user_id=user.id) }}"><i class="fa fa-long-arrow-left fa-3x" aria-hidden="true"></i></a>
+	{% if current_user.id == user.id %}
+		<h2>Мои новости</h2>
+	{% else %}
+		<h2>Новости {{ user.nickname }}</h2>
+	{% endif %}
+		<div style="padding: 3%;">
+			{% for article in articles %}
+				<div onclick="location.href='{{ url_for('article', article_id=article.id) }}'" class="art_inline">
+					<h1 class="lft_thr_up_lft">{{ article.name }}</h1>
+					<hr></hr>
+					<p style="margin-bottom: 7%; color: #67C7F1;">{{ article.created_date.strftime("%Y-%m-%d %H:%M") }}</p>
+				</div>
+			{% endfor %}
+		</div>
+{% endblock %}
