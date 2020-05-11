@@ -9,7 +9,8 @@
         <h1 style="text-align: center;">{{ article.name }}</h1>
 			<hr></hr>
 			<p>{{ article.description | safe }}</p>
-			<p style="margin-bottom: 5%; color: #67C7F1; margin-top: 2%;">{{ article.created_date.strftime("%Y-%m-%d %H:%M") }}</p>
+			<p style="color: #67C7F1; margin-top: 2%;">{{ article.created_date.strftime("%Y-%m-%d %H:%M") }}</p>
+			<pre style="margin-bottom: 5%; color: #67C7F1;">Автор: {{article.author.nickname}}<pre>
 	{% if current_user.status == "АДМИН" or current_user.id == article.author.id %}
 		<pre><a class="del_tred" style="margin-left: 0;" href="{{ url_for('delete_article', article_id=article.id) }}"><i class="fa fa-trash-o" aria-hidden="true"></i>  Удалить новость</a></pre>
 	{% endif %}
