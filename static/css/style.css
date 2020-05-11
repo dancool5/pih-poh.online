@@ -936,4 +936,28 @@ i:hover{
     width: 20%;
     align-self: flex-start;
 }
+
+.ed_art * {
+	text-align: left;
+}
+
+.ed_art {
+	font-weight: 100;
+	min-height: 20vw;
+	border-color: black;
+}
+
+.art_inline:hover {
+	cursor: pointer;
+}
+
+.art {
+	padding: 1%;
+	margin-bottom: 3%;
+}
+
+.btn_user_art {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }

@@ -2,7 +2,10 @@ from datetime import date
 from random import randint
 
 from data import db_session
+from data.article import Article
+from data.thread import Thread
 from data.user import User
+from services.forum_service import update_threads
 
 
 def edit_page_error_message(birth_date, avatar):
@@ -29,3 +32,22 @@ def edit_user_page(user_id, birth_date, about, avatar):
     user.cash_number = cash_number
     db.commit()
     db.close()
+
+
+def get_user_threads(user_id):
+    db = db_session.create_session()
+    user_threads = db.query(Thread).filter(Thread.author_id == user_id).all()
+    if user_threads:
+        user_thread = user_threads[-1]
+        update_threads([user_thread])
+    else:
+        user_thread = None
+    return user_thread
+
+
+def get_user_articles(user_id):
+    db = db_session.create_session()
+    user_articles = db.query(Article).filter(Article.author_id == user_id).filter(Article.is_admin == False).all()
+    if user_articles:
+        return user_articles[-1]
+    return None
