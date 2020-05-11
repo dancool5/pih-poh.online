@@ -94,6 +94,7 @@ def page_not_found(e):
 def article_line():
     db = db_session.create_session()
     articles = db.query(Article).all()
+    articles.reverse()
     db.close()
     return render_template('articles.html', title='Лента', articles=articles)
 
@@ -108,6 +109,29 @@ def create_article():
         create_art(form.name.data, form.description.data)
         return redirect(url_for('article_line'))
     return render_template('create_article.html', title='Написать новость', form=form)
+
+
+@app.route('/article/<article_id>', methods=['GET', 'POST'])
+def article(article_id):
+    db = db_session.create_session()
+    article = db.query(Article).filter(Article.id == article_id).first()
+    is_page_exist(article)
+    return render_template('article.html', title=article.name, article=article)
+
+
+@app.route('/<article_id>/delete')
+def delete_article(article_id):
+    db = db_session.create_session()
+    article = db.query(Article).filter(Article.id == article_id).first()
+    is_page_exist(article)
+
+    if (not current_user.id == article.author_id) and (not current_user.status == 'АДМИН'):
+        db.close()
+        return abort(404)
+
+    del_art(article_id)
+    db.close()
+    return redirect(url_for('article_line'))
 
 
 @app.route('/forum')
@@ -161,13 +185,10 @@ def thread(section_id, thread_id):
 def delete_thread(thread_id):
     db = db_session.create_session()
     thread = db.query(Thread).filter(Thread.id == thread_id).first()
-    print(1)
     is_page_exist(thread)
-    print(2)
     section_id = thread.section_id
 
     if (not current_user.id == thread.author_id) and (not current_user.status == 'АДМИН'):
-        print(3)
         db.close()
         return abort(404)
 

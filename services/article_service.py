@@ -12,3 +12,11 @@ def create_art(name, desc):
     db.add(article)
     db.commit()
     db.close()
+
+
+def del_art(art_id):
+    db = db_session.create_session()
+    article = db.query(Article).filter(Article.id == art_id).first()
+    db.delete(article)
+    db.commit()
+    db.close()
