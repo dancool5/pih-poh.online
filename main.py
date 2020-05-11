@@ -94,7 +94,6 @@ def article_line():
     db = db_session.create_session()
     articles = db.query(Article).filter(Article.is_admin).all()
     articles.reverse()
-    db.close()
     return render_template('articles.html', title='Лента', articles=articles)
 
 
