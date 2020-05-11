@@ -22,7 +22,7 @@ def global_init(db_file):
     print(f'Подключение к базе данных по адресу {conn_str}')
 
     engine = sqlalchemy.create_engine(conn_str, echo=False, pool_size=10,  max_overflow=20)
-    __factory = orm.sessionmaker(bind=engine, autoflush=False)
+    __factory = orm.sessionmaker(bind=engine)
 
     from . import __all_models
     SqlAlchemyBase.metadata.create_all(engine)

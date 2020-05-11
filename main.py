@@ -18,7 +18,6 @@ from captcha.image import ImageCaptcha
 from random import choice
 import base64
 from dotenv import load_dotenv
-import os
 
 from seeder import seed
 from services.auth_service import *
@@ -115,6 +114,7 @@ def article(article_id):
     db = db_session.create_session()
     article = db.query(Article).filter(Article.id == article_id).first()
     is_page_exist(article)
+    db.close()
     return render_template('article.html', title=article.name, article=article)
 
 
