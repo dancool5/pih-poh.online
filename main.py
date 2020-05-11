@@ -114,7 +114,6 @@ def article(article_id):
     db = db_session.create_session()
     article = db.query(Article).filter(Article.id == article_id).first()
     is_page_exist(article)
-    db.close()
     return render_template('article.html', title=article.name, article=article)
 
 
